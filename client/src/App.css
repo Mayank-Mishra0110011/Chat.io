@@ -4,6 +4,18 @@
 	scroll-behavior: smooth;
 }
 
+.anim-serv {
+	background-color: #36393f;
+}
+
+.anim-serv:hover > svg > path {
+	fill: white;
+}
+
+.anim-serv:hover {
+	background-color: #007bff;
+}
+
 .wrapper {
 	width: 100vw;
 	height: 100vh;
@@ -44,6 +56,11 @@
 	background-color: black;
 }
 
+#createServerModal {
+	background-color: transparent;
+}
+
+
 .modal-header {
 	border-bottom: none !important;
 }
@@ -51,6 +68,10 @@
 .modal-content {
 	color: white;
 	background-color: #36393f !important;
+}
+
+.cs-content {
+	background-color: #fff !important;
 }
 
 .close {
@@ -61,6 +82,13 @@
 
 .dm-channels-wrapper {
 	width: 17rem;
+	height: 100vh;
+	position: relative;
+	user-select: none;
+}
+
+.search-wrapper {
+	width: calc(100vw - 5.5rem);
 	height: 100vh;
 	position: relative;
 	user-select: none;
@@ -102,7 +130,7 @@
 	border-radius: 5px;
 }
 
-#servers::-webkit-scrollbar {
+.servers-home-wrapper::-webkit-scrollbar {
 	display: none;
 }
 
@@ -131,6 +159,10 @@
 	height: 2.5rem;
 }
 
+.notification-selected + .hover-border {
+	border-radius: 1.2rem;
+}
+
 .notification-none {
 	height: 1.3rem;
 	width: 5px;
@@ -147,6 +179,19 @@
 	height: 4rem;
 	overflow: hidden;
 	cursor: pointer;
+}
+
+.hover-border {
+	transition-duration: 0.1s;
+}
+
+.hover-border:hover { 
+	border-radius: 1.2rem;
+}
+
+.cs-server:hover {
+	-webkit-box-shadow: inset 0 0 120px rgba(0,0,0,.75) !important;
+  box-shadow: inset 0 0 120px rgba(0,0,0,.75) !important;
 }
 
 .message-input-form {
@@ -337,7 +382,7 @@
 }
 
 .chat-dm-friends-wrapper {
-	width: 100%;
+	width: calc(100vw - 22.5rem);
 	height: 100vh;
 	position: absolute;
 	top: 0;

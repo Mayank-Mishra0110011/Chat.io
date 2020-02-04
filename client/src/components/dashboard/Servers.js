@@ -9,7 +9,7 @@ class Servers extends Component {
       <div className="box">
         <div className="notification" />
         <div
-          className="server"
+          className="server hover-border"
           data-toggle="tooltip"
           data-placement="right"
           title="serverName"

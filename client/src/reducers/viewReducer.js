@@ -1,15 +1,25 @@
-import { SET_DEFAULT_VIEW, SET_DM_VIEW, SET_SERVER_VIEW } from '../actions/types';
+import {
+  SET_DEFAULT_VIEW,
+  SET_DM_VIEW,
+  SET_SERVER_VIEW,
+  SET_SEARCH_VIEW
+} from "../actions/types";
 
 const initialState = {
-	view: 'default'
+  view: "default"
 };
 
 export default function(state = initialState, action) {
-	if (action.type === SET_DEFAULT_VIEW || action.type === SET_DM_VIEW || action.type === SET_SERVER_VIEW) {
-		return {
-			...state,
-			view: action.payload
-		};
-	}
-	return state;
+  if (
+    action.type === SET_DEFAULT_VIEW ||
+    action.type === SET_DM_VIEW ||
+    action.type === SET_SERVER_VIEW ||
+    action.type === SET_SEARCH_VIEW
+  ) {
+    return {
+      ...state,
+      view: action.payload
+    };
+  }
+  return state;
 }

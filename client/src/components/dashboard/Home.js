@@ -14,6 +14,7 @@ class Home extends Component {
             data-toggle="tooltip"
             data-placement="right"
             title="Home"
+            id="home"
             onClick={this.props.setDefaultView}
           >
             <img src="./favicon.ico" alt="logoico" className="img-fluid" />
