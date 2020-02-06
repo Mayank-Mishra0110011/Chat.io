@@ -14,9 +14,14 @@ class CreateServer extends Component {
     this.clickListener = this.clickListener.bind(this);
     this.onChange = this.onChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
-    document.addEventListener("keydown", event => {
-      if (event.key === "Escape") this.modalClose();
-    });
+    this.handleEsc = this.handleEsc.bind(this);
+    document.addEventListener("keydown", this.handleEsc);
+  }
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.handleEsc);
+  }
+  handleEsc(event) {
+    if (event.key === "Escape") this.modalClose();
   }
   onChange(event) {
     if (event.target.id === "serverIcon") {

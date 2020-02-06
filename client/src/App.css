@@ -4,6 +4,46 @@
   scroll-behavior: smooth;
 }
 
+#logout {
+  color: #f04747 !important;
+}
+
+.close-settings {
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 36px;
+  flex: 0 0 36px;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  border-color: #72767d;
+  cursor: pointer;
+}
+
+.close-settings:hover {
+  background-color: rgba(114, 118, 125, 0.3);
+}
+
+.esc {
+  position: fixed;
+  top: 5rem;
+  left: 85%;
+  height: 4rem;
+  width: 3rem;
+  z-index: 10;
+}
+
+#logout:hover {
+  background-color: rgba(240, 71, 71, 0.1) !important;
+}
+
 .anim-serv {
   background-color: #36393f;
 }
@@ -268,7 +308,8 @@
 
 .activetab,
 .activestatus,
-.foactive {
+.foactive,
+.activeSetting {
   background-color: rgba(79, 84, 92, 0.32);
 }
 
@@ -277,8 +318,9 @@
     brightness(105%) contrast(100%);
 }
 
-.activetab .friendstext {
-  color: white;
+.activetab .friendstext,
+.activeSetting {
+  color: white !important;
 }
 
 .foactive .friendstext {
@@ -447,6 +489,32 @@
 
 .cover {
   height: 85vh;
+}
+
+.setting {
+  width: 95%;
+  height: 100%;
+  border-radius: 0.15rem;
+  cursor: pointer;
+  color: #8e9297;
+}
+
+.setting:hover {
+  background-color: rgba(79, 84, 92, 0.32);
+}
+
+.server-card {
+  width: 17rem;
+  cursor: pointer;
+  border-radius: 0.6rem;
+  background-color: #202225;
+  position: relative;
+  transition-duration: 0.2s;
+}
+
+.server-card:hover {
+  transform: scale(1.01);
+  box-shadow: 0 1rem 1rem rgba(0, 0, 0, 0.5);
 }
 
 .login-bg {

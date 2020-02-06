@@ -2,7 +2,9 @@ import {
   SET_DEFAULT_VIEW,
   SET_DM_VIEW,
   SET_SERVER_VIEW,
-  SET_SEARCH_VIEW
+  SET_SEARCH_VIEW,
+  SET_SETTINGS_VIEW,
+  UNSET_SETTINGS_VIEW
 } from "./types";
 
 export const setDefaultView = () => dispatch => {
@@ -19,10 +21,13 @@ export const setDMView = () => dispatch => {
   });
 };
 
-export const setServerView = () => dispatch => {
+export const setServerView = serverID => dispatch => {
   dispatch({
     type: SET_SERVER_VIEW,
-    payload: "server"
+    payload: {
+      view: "server",
+      id: serverID
+    }
   });
 };
 
@@ -30,5 +35,19 @@ export const setSearchView = () => dispatch => {
   dispatch({
     type: SET_SEARCH_VIEW,
     payload: "search"
+  });
+};
+
+export const setSettingsView = () => dispatch => {
+  dispatch({
+    type: SET_SETTINGS_VIEW,
+    payload: "settings"
+  });
+};
+
+export const unsetSettingsView = () => dispatch => {
+  dispatch({
+    type: UNSET_SETTINGS_VIEW,
+    payload: null
   });
 };

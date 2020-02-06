@@ -4,16 +4,28 @@ import { connect } from "react-redux";
 import { setServerView } from "../../actions/viewAction";
 
 class Servers extends Component {
+  constructor() {
+    super();
+    this.clickHandler = this.clickHandler.bind(this);
+  }
+  clickHandler() {
+    this.props.setServerView(this.props.id);
+  }
   render() {
+    const { selected } = this.props.currentView;
     return (
       <div className="box">
-        <div className="notification" />
+        {selected === this.props.id ? (
+          <div className="notification notification-selected" />
+        ) : (
+          <div className="notification" />
+        )}
         <div
           className="server hover-border"
           data-toggle="tooltip"
           data-placement="right"
           title="serverName"
-          onClick={this.props.setServerView}
+          onClick={this.clickHandler}
         >
           <img
             src="./assets/image/sample1.jpg"

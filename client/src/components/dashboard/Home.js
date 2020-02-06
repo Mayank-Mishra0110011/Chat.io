@@ -5,9 +5,14 @@ import { setDefaultView } from "../../actions/viewAction";
 
 class Home extends Component {
   render() {
+    const { selected } = this.props.currentView;
     return (
       <div className="box">
-        <div className="notification notification-selected" />
+        {selected === "0" ? (
+          <div className="notification notification-selected" />
+        ) : (
+          <div className="notification-none" />
+        )}
         <div className="home">
           <div
             className="server"
