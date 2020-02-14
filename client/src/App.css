@@ -85,7 +85,7 @@
 }
 
 .server-member-wrapper {
-  width: 17rem;
+  width: calc(100vw - 69.5rem);
   height: 100vh;
   position: relative;
   user-select: none;
@@ -94,6 +94,39 @@
 
 .show {
   background-color: black;
+}
+
+.cb {
+  width: 24px;
+  height: 24px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 3px;
+}
+
+.cb-checked {
+  border-color: #fff;
+  background-color: #fff;
+}
+
+.cb-unchecked {
+  border-color: #72767d;
+}
+
+.cb-wrapper {
+  border: 1px solid #000000;
+  color: white;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.cb-selected {
+  background-color: #7289da !important;
+}
+
+#createChannelModal {
+  background-color: rgb(0, 0, 0, 0.85);
+  z-index: 100;
 }
 
 #createServerModal {
@@ -220,6 +253,11 @@
   cursor: pointer;
 }
 
+.member {
+  width: 2rem;
+  height: 2rem;
+}
+
 .hover-border {
   transition-duration: 0.1s;
 }
@@ -309,7 +347,8 @@
 .activetab,
 .activestatus,
 .foactive,
-.activeSetting {
+.activeSetting,
+.activeUser {
   background-color: rgba(79, 84, 92, 0.32);
 }
 
@@ -340,6 +379,16 @@
 .friendsbox:hover #friendsicon {
   filter: invert(100%) sepia(99%) saturate(18%) hue-rotate(214deg)
     brightness(105%) contrast(100%);
+}
+
+.add:hover > .options,
+.add:hover > img {
+  filter: invert(100%) sepia(99%) saturate(18%) hue-rotate(214deg)
+    brightness(105%) contrast(100%);
+}
+
+.add:hover > p {
+  color: white;
 }
 
 #friendsicon,
@@ -491,7 +540,8 @@
   height: 85vh;
 }
 
-.setting {
+.setting,
+.user {
   width: 95%;
   height: 100%;
   border-radius: 0.15rem;
@@ -499,8 +549,10 @@
   color: #8e9297;
 }
 
-.setting:hover {
+.setting:hover,
+.user:hover {
   background-color: rgba(79, 84, 92, 0.32);
+  color: #dcddde;
 }
 
 .server-card {

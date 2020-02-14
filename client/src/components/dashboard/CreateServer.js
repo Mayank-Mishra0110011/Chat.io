@@ -1,4 +1,9 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import classnames from "classnames";
+
+import { createServer, getServers } from "../../actions/serverAction";
 
 class CreateServer extends Component {
   constructor() {
@@ -15,6 +20,7 @@ class CreateServer extends Component {
     this.onChange = this.onChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.handleEsc = this.handleEsc.bind(this);
+    this.createServer = this.createServer.bind(this);
     document.addEventListener("keydown", this.handleEsc);
   }
   componentWillUnmount() {
@@ -75,8 +81,20 @@ class CreateServer extends Component {
       thisElement.classList.add("notification-none");
     }
   }
+  createServer() {
+    this.props
+      .createServer({
+        serverName: this.state.serverName,
+        image: this.state.serverIcon
+      })
+      .then(() => {
+        this.props.getServers();
+      })
+      .catch(() => {});
+  }
   render() {
     const { view, serverIcon } = this.state;
+    const { errors } = this.props;
     return (
       <div>
         <div className="box">
@@ -234,7 +252,12 @@ class CreateServer extends Component {
                             SERVER NAME
                           </label>
                           <input
-                            className="form-control finput text-dark"
+                            className={classnames(
+                              "form-control finput text-dark",
+                              {
+                                "is-invalid": errors.server
+                              }
+                            )}
                             autoComplete="off"
                             type="text"
                             name="serverName"
@@ -244,6 +267,11 @@ class CreateServer extends Component {
                             onChange={this.onChange}
                             autoFocus
                           />
+                          {errors.server && (
+                            <div className="invalid-feedback">
+                              {errors.server}
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="col-6" style={{ height: "15rem" }}>
@@ -329,7 +357,11 @@ class CreateServer extends Component {
                         >
                           Back
                         </button>
-                        <button className="btn btn-primary px-4" type="button">
+                        <button
+                          className="btn btn-primary px-4"
+                          type="button"
+                          onClick={this.createServer}
+                        >
                           Create
                         </button>
                       </div>
@@ -393,4 +425,16 @@ class CreateServer extends Component {
   }
 }
 
-export default CreateServer;
+CreateServer.propTypes = {
+  createServer: PropTypes.func.isRequired,
+  getServers: PropTypes.func.isRequired,
+  errors: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  errors: state.errors
+});
+
+export default connect(mapStateToProps, { createServer, getServers })(
+  CreateServer
+);

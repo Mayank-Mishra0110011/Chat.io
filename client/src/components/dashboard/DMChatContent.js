@@ -7,9 +7,9 @@ class DMChatContent extends Component {
     const { view } = this.props.currentView;
     return (
       <div style={{ height: "80vh", maxWidth: "99%" }} className="scrollable">
-        <div className="container py-4">
+        <div className="container py-4 ml-0">
           <div className="row">
-            <div className="col-lg-12 col-9">
+            <div className="col-12">
               {view === "server" ? (
                 <p className="text-light">
                   Welcome to the begining of
@@ -41,7 +41,7 @@ class DMChatContent extends Component {
               )}
               <span className="divider py-3">January 21, 2020</span>
             </div>
-            <div className="col-lg-12 col-9">
+            <div className="col-12">
               <div
                 className="d-flex flex-column"
                 style={{ position: "relative", minHeight: "5rem" }}

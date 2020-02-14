@@ -7,11 +7,11 @@ import Channels from "./Channels";
 
 class DirectMessage extends Component {
   render() {
-    const { view } = this.props.currentView;
+    const { view, selected } = this.props.currentView;
     return (
       <div className="dm scrollable">
         {view === "server" ? (
-          <Channels />
+          <Channels selectedServer={selected} />
         ) : (
           <div>
             <Friends />

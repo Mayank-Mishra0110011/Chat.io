@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { setSettingsView } from "../../actions/viewAction";
+import { setStatus } from "../../actions/userAction";
 
 class User extends Component {
   constructor() {
@@ -11,16 +12,24 @@ class User extends Component {
   showUserSettings() {
     this.props.setSettingsView();
   }
+  changeStatus(status) {
+    let active = document.getElementsByClassName("activestatus")[0];
+    active.classList.remove("activestatus");
+    status.classList.add("activestatus");
+    let currentStatus = document.getElementById("status");
+    currentStatus.classList.remove(currentStatus.classList[1]);
+    document.getElementById("statusTxt").innerText = status.id;
+    currentStatus.classList.add(status.id);
+    this.props.setStatus(status.id);
+  }
   componentDidMount() {
+    if (this.props.user.userData) {
+      document
+        .getElementById(this.props.user.userData.status)
+        .classList.add("activestatus");
+    }
     [...document.getElementsByClassName("status-option")].forEach(status => {
-      status.addEventListener("click", function() {
-        let active = document.getElementsByClassName("activestatus")[0];
-        active.classList.remove("activestatus");
-        this.classList.add("activestatus");
-        let currentStatus = document.getElementById("status");
-        currentStatus.classList.remove(currentStatus.classList[1]);
-        currentStatus.classList.add(this.id);
-      });
+      status.addEventListener("click", this.changeStatus.bind(this, status));
     });
     [...document.getElementsByClassName("options")].forEach(option => {
       if (option.id === "settings") {
@@ -106,6 +115,7 @@ class User extends Component {
     }
   }
   render() {
+    const { userData } = this.props.user;
     return (
       <div id="user">
         <div className="userbox d-flex justify-content-center align-items-center">
@@ -115,12 +125,14 @@ class User extends Component {
             onClick={this.showStatusOptions}
           >
             <div className="friendPic">
-              <img
-                src="./assets/image/def.png"
-                alt="sp1"
-                className="img-fluid friendProfilePic"
-                id="profilepic"
-              />
+              {userData ? (
+                <img
+                  src={userData.profilePicture}
+                  alt="sp1"
+                  className="img-fluid friendProfilePic"
+                  id="profilepic"
+                />
+              ) : null}
             </div>
           </div>
           <div
@@ -128,18 +140,23 @@ class User extends Component {
             className="d-flex flex-column"
             onClick={this.showStatusOptions}
           >
-            <p className="friendstext">MainUser</p>
-            <p
-              className="mb-0"
-              style={{ color: "#8e9297", fontSize: "x-small" }}
-            >
-              MainUserTag
-            </p>
-            <div className="status online" id="status" />
+            {userData ? (
+              <>
+                <p className="friendstext text-light">{userData.username}</p>
+                <p
+                  id="statusTxt"
+                  className="mb-0"
+                  style={{ color: "#8e9297", fontSize: "x-small" }}
+                >
+                  {userData.status}
+                </p>
+                <div className={"status " + userData.status} id="status" />{" "}
+              </>
+            ) : null}
             <div className="change-status">
               <div className="friends" style={{ height: "11vh" }}>
                 <div
-                  className="status-option d-flex justify-content-center activestatus"
+                  className={"status-option d-flex justify-content-center"}
                   id="online"
                 >
                   <div
@@ -272,7 +289,13 @@ class User extends Component {
 }
 
 User.propTypes = {
-  setSettingsView: PropTypes.func.isRequired
+  user: PropTypes.object.isRequired,
+  setSettingsView: PropTypes.func.isRequired,
+  setStatus: PropTypes.func.isRequired
 };
 
-export default connect(null, { setSettingsView })(User);
+const mapStateToProps = state => ({
+  user: state.user
+});
+
+export default connect(mapStateToProps, { setSettingsView, setStatus })(User);

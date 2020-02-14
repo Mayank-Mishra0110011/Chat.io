@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { unsetSettingsView } from "../../actions/viewAction";
+import { logoutUser } from "../../actions/authAction";
 
 class UserSettings extends Component {
   constructor() {
@@ -172,7 +173,13 @@ class UserSettings extends Component {
                 height: "2.5rem"
               }}
             >
-              <div className="d-flex align-items-center setting" id="logout">
+              <div
+                className="d-flex align-items-center setting"
+                id="logout"
+                onClick={() => {
+                  this.props.logoutUser();
+                }}
+              >
                 <p className="mb-0 ml-2">Log Out</p>
               </div>
             </div>
@@ -239,7 +246,8 @@ class UserSettings extends Component {
 }
 
 UserSettings.propTypes = {
-  unsetSettingsView: PropTypes.func.isRequired
+  unsetSettingsView: PropTypes.func.isRequired,
+  logoutUser: PropTypes.func.isRequired
 };
 
-export default connect(null, { unsetSettingsView })(UserSettings);
+export default connect(null, { unsetSettingsView, logoutUser })(UserSettings);

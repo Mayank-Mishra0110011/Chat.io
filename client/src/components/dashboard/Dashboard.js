@@ -1,10 +1,15 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+
+import { getServers } from "../../actions/serverAction";
+import { getUserData } from "../../actions/userAction";
+
 import Home from "./Home";
 import Servers from "./Servers";
 import DirectMessage from "./DirectMessage";
 import CreateServer from "./CreateServer";
+import ComponentLoading from "./ComponentLoading";
 import SearchServers from "./SearchServers";
 import User from "./User";
 import DMChat from "./DMChat";
@@ -91,6 +96,10 @@ class Dashboard extends Component {
     }
   }
   componentDidMount() {
+    if (this.props.currentView !== "settings") {
+      this.props.getServers();
+      this.props.getUserData();
+    }
     [...document.getElementsByClassName("server")].forEach(server => {
       server.addEventListener("mouseover", serverHoverInHandler);
       server.addEventListener("mouseout", serverHoverOutHandler);
@@ -152,15 +161,32 @@ class Dashboard extends Component {
   }
   render() {
     const { view } = this.props.currentView;
+    const { servers, serversLoading } = this.props.servers;
+    const { userDataLoading } = this.props.user;
+    const serverList = [];
+    if (!serversLoading && servers) {
+      for (let i = 0; i < servers.length; i++) {
+        serverList.push(
+          <Servers
+            id={(i + 1).toString()}
+            name={servers[i].name}
+            image={servers[i].image}
+            key={i}
+          />
+        );
+      }
+    }
     return (
       <div className="wrapper">
-        {view === "settings" ? (
+        {serversLoading || userDataLoading ? (
+          <ComponentLoading />
+        ) : view === "settings" ? (
           <UserSettings></UserSettings>
         ) : (
           <>
             <div className="servers-home-wrapper">
               <Home />
-              <Servers id="1" />
+              {serversLoading ? null : serverList}
               <CreateServer />
               <SearchServers />
             </div>
@@ -199,11 +225,17 @@ class Dashboard extends Component {
 }
 
 Dashboard.propTypes = {
-  currentView: PropTypes.object.isRequired
+  currentView: PropTypes.object.isRequired,
+  servers: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  getServers: PropTypes.func.isRequired,
+  getUserData: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  currentView: state.currentView
+  currentView: state.currentView,
+  user: state.user,
+  servers: state.servers
 });
 
-export default connect(mapStateToProps)(Dashboard);
+export default connect(mapStateToProps, { getServers, getUserData })(Dashboard);

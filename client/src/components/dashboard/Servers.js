@@ -24,14 +24,10 @@ class Servers extends Component {
           className="server hover-border"
           data-toggle="tooltip"
           data-placement="right"
-          title="serverName"
+          title={this.props.name}
           onClick={this.clickHandler}
         >
-          <img
-            src="./assets/image/sample1.jpg"
-            alt="logoico"
-            className="img-fluid"
-          />
+          <img src={this.props.image} alt="logoico" className="img-fluid" />
         </div>
       </div>
     );
