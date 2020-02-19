@@ -15,7 +15,7 @@ import User from "./User";
 import DMChat from "./DMChat";
 import FriendsStatus from "./FriendsStatus";
 import SearchServersContent from "./SearchServersContent";
-import UserSettings from "./UserSettings";
+import Settings from "./Settings";
 import Chat from "./Chat";
 
 class Dashboard extends Component {
@@ -181,7 +181,7 @@ class Dashboard extends Component {
         {serversLoading || userDataLoading ? (
           <ComponentLoading />
         ) : view === "settings" ? (
-          <UserSettings></UserSettings>
+          <Settings></Settings>
         ) : (
           <>
             <div className="servers-home-wrapper">

@@ -5,6 +5,7 @@ import classnames from "classnames";
 
 import { setSelectedChannel, getServers } from "../../actions/serverAction";
 import { createChannel } from "../../actions/channelAction";
+import { setSettingsView, setSubView } from "../../actions/viewAction";
 
 class Channels extends Component {
   constructor() {
@@ -18,9 +19,17 @@ class Channels extends Component {
     this.handleEsc = this.handleEsc.bind(this);
     this.modalOpen = this.modalOpen.bind(this);
     this.modalClose = this.modalClose.bind(this);
+    this.openChannelSettings = this.openChannelSettings.bind(this);
     this.clickListener = this.clickListener.bind(this);
     this.selectOption = this.selectOption.bind(this);
     document.addEventListener("keydown", this.handleEsc);
+  }
+  openChannelSettings(data) {
+    this.props.setSubView({
+      subView: "channel",
+      subViewData: data
+    });
+    this.props.setSettingsView();
   }
   createChannel() {
     const selectedServer = parseInt(this.props.selectedServer) - 1;
@@ -79,7 +88,8 @@ class Channels extends Component {
       });
     });
     [...document.getElementsByClassName("friendsbox")].forEach(box => {
-      box.addEventListener("click", function() {
+      box.addEventListener("click", function(event) {
+        if (event.target.className.includes("channel-settings")) return;
         document
           .getElementsByClassName("foactive")[0]
           .classList.remove("foactive");
@@ -110,6 +120,7 @@ class Channels extends Component {
     const textChannels = [];
     const audioChannels = [];
     const videoChannels = [];
+    const serverName = servers[selectedServer].name;
     for (let i = 0; i < servers[selectedServer].channels.length; i++) {
       if (
         servers[selectedServer].selectedChannel ===
@@ -128,17 +139,21 @@ class Channels extends Component {
                 <div className="notification mr-2" />
                 <div
                   className={classnames(
-                    "friendsbox d-flex align-items-center mt-1",
+                    "friendsbox d-flex align-items-center mt-1 channel",
                     {
                       "friendsbox d-flex align-items-center foactive mt-1":
                         servers[selectedServer].selectedChannel ===
                         servers[selectedServer].channels[i]._id
                     }
                   )}
-                  onClick={this.clickHandler.bind(
-                    this,
-                    servers[selectedServer].channels[i]._id
-                  )}
+                  onClick={event => {
+                    if (event.target.className.includes("channel-settings"))
+                      return;
+                    this.clickHandler.call(
+                      this,
+                      servers[selectedServer].channels[i]._id
+                    );
+                  }}
                   style={{ height: "100%", borderRadius: "2px", width: "90%" }}
                 >
                   <div className="d-flex align-items-center ml-2">
@@ -151,6 +166,31 @@ class Channels extends Component {
                     <p className="text-light mb-0">
                       {servers[selectedServer].channels[i].name}
                     </p>
+                  </div>
+                  <div
+                    className="d-flex justify-content-end"
+                    style={{
+                      flex: "1",
+                      height: "100%"
+                    }}
+                  >
+                    <div
+                      className="o-options d-flex justify-content-end align-items-center not-option mr-2 channel-settings"
+                      style={{
+                        visibility: "hidden"
+                      }}
+                      onClick={this.openChannelSettings.bind(this, {
+                        name: servers[selectedServer].channels[i].name,
+                        id: servers[selectedServer].channels[i]._id,
+                        type: "text"
+                      })}
+                    >
+                      <img
+                        src="./assets/image/settings.svg"
+                        alt="sp1"
+                        className="img-fluid channel-settings"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -167,21 +207,25 @@ class Channels extends Component {
                 <div className="notification mr-2" />
                 <div
                   className={classnames(
-                    "friendsbox d-flex align-items-center mt-1",
+                    "friendsbox d-flex align-items-center mt-1 channel",
                     {
                       "friendsbox d-flex align-items-center foactive mt-1":
                         servers[selectedServer].selectedChannel ===
                         servers[selectedServer].channels[i]._id
                     }
                   )}
-                  onClick={this.clickHandler.bind(
-                    this,
-                    servers[selectedServer].channels[i]._id
-                  )}
+                  onClick={event => {
+                    if (event.target.className.includes("channel-settings"))
+                      return;
+                    this.clickHandler.call(
+                      this,
+                      servers[selectedServer].channels[i]._id
+                    );
+                  }}
                   style={{ height: "100%", borderRadius: "2px", width: "90%" }}
                 >
                   <div className="d-flex align-items-center ml-2">
-                    <div className="options d-flex justify-content-center align-items-center not-option">
+                    <div className="o-options d-flex justify-content-center align-items-center not-option">
                       <img
                         src="./assets/image/unmute.png"
                         alt="sp1"
@@ -191,6 +235,31 @@ class Channels extends Component {
                     <p className="text-light mb-0">
                       {servers[selectedServer].channels[i].name}{" "}
                     </p>
+                  </div>
+                  <div
+                    className="d-flex justify-content-end"
+                    style={{
+                      flex: "1",
+                      height: "100%"
+                    }}
+                  >
+                    <div
+                      className="o-options d-flex justify-content-end align-items-center not-option mr-2 channel-settings"
+                      style={{
+                        visibility: "hidden"
+                      }}
+                      onClick={this.openChannelSettings.bind(this, {
+                        name: servers[selectedServer].channels[i].name,
+                        id: servers[selectedServer].channels[i]._id,
+                        type: "audio"
+                      })}
+                    >
+                      <img
+                        src="./assets/image/settings.svg"
+                        alt="sp1"
+                        className="img-fluid channel-settings"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -207,21 +276,25 @@ class Channels extends Component {
                 <div className="notification mr-2" />
                 <div
                   className={classnames(
-                    "friendsbox d-flex align-items-center mt-1",
+                    "friendsbox d-flex align-items-center mt-1 channel",
                     {
                       "friendsbox d-flex align-items-center foactive mt-1":
                         servers[selectedServer].selectedChannel ===
                         servers[selectedServer].channels[i]._id
                     }
                   )}
-                  onClick={this.clickHandler.bind(
-                    this,
-                    servers[selectedServer].channels[i]._id
-                  )}
+                  onClick={event => {
+                    if (event.target.className.includes("channel-settings"))
+                      return;
+                    this.clickHandler.call(
+                      this,
+                      servers[selectedServer].channels[i]._id
+                    );
+                  }}
                   style={{ height: "100%", borderRadius: "2px", width: "90%" }}
                 >
                   <div className="d-flex align-items-center ml-2">
-                    <div className="options d-flex justify-content-center align-items-center not-option">
+                    <div className="o-options d-flex justify-content-center align-items-center not-option">
                       <img
                         src="./assets/image/videoCall.png"
                         alt="sp1"
@@ -231,6 +304,31 @@ class Channels extends Component {
                     <p className="text-light mb-0">
                       {servers[selectedServer].channels[i].name}{" "}
                     </p>
+                  </div>
+                  <div
+                    className="d-flex justify-content-end"
+                    style={{
+                      flex: "1",
+                      height: "100%"
+                    }}
+                  >
+                    <div
+                      className="o-options d-flex justify-content-end align-items-center not-option mr-2 channel-settings"
+                      style={{
+                        visibility: "hidden"
+                      }}
+                      onClick={this.openChannelSettings.bind(this, {
+                        name: servers[selectedServer].channels[i].name,
+                        id: servers[selectedServer].channels[i]._id,
+                        type: "video"
+                      })}
+                    >
+                      <img
+                        src="./assets/image/settings.svg"
+                        alt="sp1"
+                        className="img-fluid channel-settings"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -244,6 +342,30 @@ class Channels extends Component {
     const { errors } = this.props;
     return (
       <div>
+        <div className="friends serverTile align-items-start">
+          <div
+            className="d-flex align-items-center"
+            style={{
+              width: "100%",
+              height: "90%",
+              cursor: "pointer",
+              borderBottom: "1px solid #222427"
+            }}
+          >
+            <div className="d-flex align-items-center add ml-3">
+              <p className="friendstext text-light">{serverName}</p>
+            </div>
+            <div className="d-flex justify-content-end" style={{ flex: "1" }}>
+              <div className="o-options d-flex justify-content-center align-items-center not-option">
+                <img
+                  src="./assets/image/caretDown.png"
+                  alt="sp1"
+                  className="img-fluid"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="friends" style={{ height: "8vh", width: "100%" }}>
           <div
             className="d-flex align-items-start"
@@ -257,7 +379,7 @@ class Channels extends Component {
                 className="d-flex align-items-center add"
                 style={{ cursor: "pointer" }}
               >
-                <div className="options d-flex justify-content-center align-items-center not-option">
+                <div className="o-options d-flex justify-content-center align-items-center not-option">
                   <img
                     src="./assets/image/caretDown.png"
                     alt="sp1"
@@ -268,7 +390,7 @@ class Channels extends Component {
               </div>
               <div className="d-flex justify-content-end" style={{ flex: "1" }}>
                 <div
-                  className="options d-flex align-items-center not-option add"
+                  className="o-options d-flex align-items-center not-option add"
                   onClick={this.modalOpen.bind(this, "Text")}
                 >
                   <img
@@ -295,7 +417,7 @@ class Channels extends Component {
                 className="d-flex align-items-center add"
                 style={{ cursor: "pointer" }}
               >
-                <div className="options d-flex justify-content-center align-items-center not-option">
+                <div className="o-options d-flex justify-content-center align-items-center not-option">
                   <img
                     src="./assets/image/caretDown.png"
                     alt="sp1"
@@ -306,7 +428,7 @@ class Channels extends Component {
               </div>
               <div className="d-flex justify-content-end" style={{ flex: "1" }}>
                 <div
-                  className="options d-flex align-items-center not-option add"
+                  className="o-options d-flex align-items-center not-option add"
                   onClick={this.modalOpen.bind(this, "Audio")}
                 >
                   <img
@@ -333,7 +455,7 @@ class Channels extends Component {
                 className="d-flex align-items-center add"
                 style={{ cursor: "pointer" }}
               >
-                <div className="options d-flex justify-content-center align-items-center not-option">
+                <div className="o-options d-flex justify-content-center align-items-center not-option">
                   <img
                     src="./assets/image/caretDown.png"
                     alt="sp1"
@@ -344,7 +466,7 @@ class Channels extends Component {
               </div>
               <div className="d-flex justify-content-end" style={{ flex: "1" }}>
                 <div
-                  className="options d-flex align-items-center not-option add"
+                  className="o-options d-flex align-items-center not-option add"
                   onClick={this.modalOpen.bind(this, "Video")}
                 >
                   <img
@@ -446,7 +568,7 @@ class Channels extends Component {
                       </g>
                     </svg>
                   </div>
-                  <div className="options d-flex justify-content-center align-items-center not-option">
+                  <div className="o-options d-flex justify-content-center align-items-center not-option">
                     <img
                       src="./assets/image/unmute.png"
                       alt="sp1"
@@ -480,7 +602,7 @@ class Channels extends Component {
                       </g>
                     </svg>
                   </div>
-                  <div className="options d-flex justify-content-center align-items-center not-option">
+                  <div className="o-options d-flex justify-content-center align-items-center not-option">
                     <img
                       src="./assets/image/videoCall.png"
                       alt="sp1"
@@ -553,7 +675,9 @@ Channels.propTypes = {
   setSelectedChannel: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
   createChannel: PropTypes.func.isRequired,
-  getServers: PropTypes.func.isRequired
+  getServers: PropTypes.func.isRequired,
+  setSettingsView: PropTypes.func.isRequired,
+  setSubView: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -564,5 +688,7 @@ const mapStateToProps = state => ({
 export default connect(mapStateToProps, {
   setSelectedChannel,
   createChannel,
-  getServers
+  getServers,
+  setSettingsView,
+  setSubView
 })(Channels);

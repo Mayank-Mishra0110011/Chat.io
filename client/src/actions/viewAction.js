@@ -4,7 +4,8 @@ import {
   SET_SERVER_VIEW,
   SET_SEARCH_VIEW,
   SET_SETTINGS_VIEW,
-  UNSET_SETTINGS_VIEW
+  UNSET_SETTINGS_VIEW,
+  SET_SUB_VIEW
 } from "./types";
 
 export const setDefaultView = () => dispatch => {
@@ -49,5 +50,12 @@ export const unsetSettingsView = () => dispatch => {
   dispatch({
     type: UNSET_SETTINGS_VIEW,
     payload: null
+  });
+};
+
+export const setSubView = view => dispatch => {
+  dispatch({
+    type: SET_SUB_VIEW,
+    payload: view
   });
 };

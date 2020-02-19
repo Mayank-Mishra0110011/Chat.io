@@ -4,11 +4,14 @@ import {
   SET_SERVER_VIEW,
   SET_SEARCH_VIEW,
   SET_SETTINGS_VIEW,
-  UNSET_SETTINGS_VIEW
+  UNSET_SETTINGS_VIEW,
+  SET_SUB_VIEW
 } from "../actions/types";
 
 const initialState = {
   view: "default",
+  subView: null,
+  subViewData: null,
   previousView: null,
   selected: "0"
 };
@@ -42,6 +45,12 @@ export default function(state = initialState, action) {
       ...state,
       view: state.previousView,
       previousView: action.payload
+    };
+  } else if (action.type === SET_SUB_VIEW) {
+    return {
+      ...state,
+      subView: action.payload.subView,
+      subViewData: action.payload.subViewData
     };
   }
   return state;

@@ -4,7 +4,7 @@
   scroll-behavior: smooth;
 }
 
-#logout {
+.danger-setting {
   color: #f04747 !important;
 }
 
@@ -40,7 +40,7 @@
   z-index: 10;
 }
 
-#logout:hover {
+.danger-setting:hover {
   background-color: rgba(240, 71, 71, 0.1) !important;
 }
 
@@ -285,6 +285,15 @@
   background-color: #40444a;
 }
 
+.serverTile {
+  height: 10vh;
+  width: 100%;
+}
+
+.serverTile:hover > div {
+  background-color: #33363c;
+}
+
 .chat-btn {
   height: 44px;
   padding: 15px;
@@ -344,6 +353,18 @@
   background-color: rgba(79, 84, 92, 0.32);
 }
 
+.channel:hover .o-options {
+  visibility: visible !important;
+}
+
+.foactive .o-options {
+  visibility: visible !important;
+}
+
+.foactive {
+  cursor: default;
+}
+
 .activetab,
 .activestatus,
 .foactive,
@@ -381,7 +402,7 @@
     brightness(105%) contrast(100%);
 }
 
-.add:hover > .options,
+.add:hover > .o-options,
 .add:hover > img {
   filter: invert(100%) sepia(99%) saturate(18%) hue-rotate(214deg)
     brightness(105%) contrast(100%);
@@ -404,14 +425,16 @@
   overflow: hidden;
 }
 
-.options {
+.options,
+.o-options {
   width: 35px;
   height: 32px;
   cursor: pointer;
   border-radius: 3px;
 }
 
-.options:hover {
+.options:hover,
+.o-options:hover {
   background-color: rgba(79, 84, 92, 0.32);
 }
 
@@ -419,7 +442,8 @@
   background-color: initial;
 }
 
-.options img {
+.options img,
+.o-options img {
   max-height: 20px;
   filter: invert(63%) sepia(6%) saturate(257%) hue-rotate(173deg)
     brightness(91%) contrast(90%);
