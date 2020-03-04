@@ -1,4 +1,5 @@
 const express = require("express");
+const socket = require("socket.io");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const bodyParser = require("body-parser");
@@ -8,6 +9,7 @@ const channel = require("./routes/channel");
 const path = require("path");
 const app = express();
 const db = require("./config/keys").mongoURI;
+//const servers = []
 
 mongoose.set("useFindAndModify", false);
 
@@ -52,6 +54,29 @@ if (process.env.NODE_ENV === "production") {
 
 const port = process.env.PORT || 5000;
 
-app.listen(port, () => {
+const socketServer = app.listen(port, () => {
   console.log(`Server Running on port ${port}`);
+});
+
+const io = socket(socketServer);
+
+io.on("connection", socket => {
+  console.log(`${socket.id} connected`);
+  socket.on("startChat", data => {
+    socket.join(data.conversationID);
+  });
+
+  socket.on("sendMessage", data => {
+    io.sockets
+      .in(data.conversationID)
+      .emit("newMessage", { message: data.message });
+  });
+
+  socket.on("endChat", data => {
+    socket.leave(data.conversationID);
+  });
+
+  socket.on("disconnect", () => {
+    console.log(`${socket.id} disconnected`);
+  });
 });

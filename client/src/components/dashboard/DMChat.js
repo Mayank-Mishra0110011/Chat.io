@@ -1,30 +1,30 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import DMChatHeader from './DMChatHeader';
-import DMChatContent from './DMChatContent';
-import DMChatInput from './DMChatInput';
-import ServerChatHeader from './ServerChatHeader';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import DMChatHeader from "./DMChatHeader";
+import DMChatContent from "./DMChatContent";
+import DMChatInput from "./DMChatInput";
+import ServerChatHeader from "./ServerChatHeader";
 
 class DMChat extends Component {
-	render() {
-		const { view } = this.props.currentView;
-		return (
-			<div>
-				{view === 'server' ? <ServerChatHeader /> : <DMChatHeader />}
-				<DMChatContent />
-				<DMChatInput />
-			</div>
-		);
-	}
+  render() {
+    const { view } = this.props.currentView;
+    return (
+      <div>
+        {view === "server" ? <ServerChatHeader /> : <DMChatHeader />}
+        <DMChatContent />
+        <DMChatInput />
+      </div>
+    );
+  }
 }
 
 DMChat.propTypes = {
-	currentView: PropTypes.object.isRequired
+  currentView: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => ({
-	currentView: state.currentView
+const mapStateToProps = state => ({
+  currentView: state.currentView
 });
 
 export default connect(mapStateToProps)(DMChat);

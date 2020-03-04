@@ -128,6 +128,7 @@ class Channels extends Component {
       ) {
         document.title = "#" + servers[selectedServer].channels[i].name;
       }
+
       switch (servers[selectedServer].channels[i].type) {
         case "text":
           textChannels.push(

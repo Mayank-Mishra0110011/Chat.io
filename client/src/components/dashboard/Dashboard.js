@@ -164,6 +164,7 @@ class Dashboard extends Component {
     const { servers, serversLoading } = this.props.servers;
     const { userDataLoading } = this.props.user;
     const serverList = [];
+
     if (!serversLoading && servers) {
       for (let i = 0; i < servers.length; i++) {
         serverList.push(

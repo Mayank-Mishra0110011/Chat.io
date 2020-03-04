@@ -65,7 +65,7 @@ class SearchServersContent extends Component {
             <div className="card mx-3 my-4 server-card">
               <div className="w-100">
                 <img
-                  src="https://morningpicker.com/wp-content/uploads/2019/09/demon-slayer-poster.jpeg"
+                  src="https://wallpapercave.com/wp/3JYJQMC.jpg"
                   alt="community"
                   style={{ width: "100%", maxHeight: "10rem" }}
                 />
