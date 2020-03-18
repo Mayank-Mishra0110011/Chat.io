@@ -9,6 +9,7 @@ const channel = require("./routes/channel");
 const path = require("path");
 const app = express();
 const db = require("./config/keys").mongoURI;
+
 //const servers = []
 
 mongoose.set("useFindAndModify", false);

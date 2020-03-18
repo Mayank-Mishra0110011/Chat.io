@@ -181,6 +181,7 @@ class Channels extends Component {
                         visibility: "hidden"
                       }}
                       onClick={this.openChannelSettings.bind(this, {
+                        serverID: servers[selectedServer]._id,
                         name: servers[selectedServer].channels[i].name,
                         id: servers[selectedServer].channels[i]._id,
                         type: "text"

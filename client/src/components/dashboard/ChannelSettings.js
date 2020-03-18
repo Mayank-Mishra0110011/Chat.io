@@ -2,7 +2,28 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
+import { deleteChannel } from "../../actions/channelAction";
+import { unsetSettingsView } from "../../actions/viewAction";
+import { getServers } from "../../actions/serverAction";
+
 class ChannelSettings extends Component {
+  constructor() {
+    super();
+    this.deleteChannel = this.deleteChannel.bind(this);
+  }
+  deleteChannel() {
+    const { subViewData } = this.props.currentView;
+    this.props
+      .deleteChannel({
+        serverID: subViewData.serverID,
+        channelID: subViewData.id
+      })
+      .then(() => {
+        this.props.unsetSettingsView();
+        this.props.getServers();
+      })
+      .catch(() => {});
+  }
   render() {
     const { subViewData } = this.props.currentView;
     let channelType, specifier;
@@ -122,11 +143,7 @@ class ChannelSettings extends Component {
           >
             <div
               className="d-flex align-items-center setting danger-setting"
-              // onClick={() => {
-              //   document.removeEventListener("keydown", this.handleEsc);
-              //   this.props.unsetSettingsView();
-              //   this.props.logoutUser();
-              // }}
+              onClick={this.deleteChannel}
             >
               <p className="mb-0 ml-2">Delete Channel</p>
             </div>
@@ -138,11 +155,18 @@ class ChannelSettings extends Component {
 }
 
 ChannelSettings.propTypes = {
-  currentView: PropTypes.object.isRequired
+  currentView: PropTypes.object.isRequired,
+  deleteChannel: PropTypes.func.isRequired,
+  getServers: PropTypes.func.isRequired,
+  unsetSettingsView: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   currentView: state.currentView
 });
 
-export default connect(mapStateToProps)(ChannelSettings);
+export default connect(mapStateToProps, {
+  deleteChannel,
+  getServers,
+  unsetSettingsView
+})(ChannelSettings);

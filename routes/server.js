@@ -39,6 +39,7 @@ router.post(
       const newServer = new Server({
         name: req.body.serverName,
         image: image,
+        creator: req.user.id,
         selectedChannel: channel1
       });
       newServer.admins.push(req.user.id);

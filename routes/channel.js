@@ -55,4 +55,31 @@ router.post(
   }
 );
 
+//@route POST channel/delete
+//@desc delete channel
+//@access Private
+router.post(
+  "/delete",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const { serverID, channelID } = req.body;
+    if (!serverID)
+      return res.status(400).json({ channel: "Server ID is required" });
+    if (!channelID)
+      return res.status(400).json({ channel: "Channel ID is required" });
+    server.findById(serverID).then(foundServer => {
+      if (foundServer.creator != req.user.id)
+        return res.status(401).json({ Unauthorized: true });
+      if (!foundServer.channels.includes(channelID))
+        return res.status(404).json({ channelNotFound: "Channel Not Found" });
+      channel.findByIdAndRemove(channelID).then(() => {
+        foundServer.channels.splice(foundServer.channels.indexOf(channelID), 1);
+        foundServer.save().then(() => {
+          res.json({ success: true });
+        });
+      });
+    });
+  }
+);
+
 module.exports = router;
