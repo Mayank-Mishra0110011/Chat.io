@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { setServerView } from "../../actions/viewAction";
+
+import { setServerView } from "../../../actions/viewAction";
 
 class Servers extends Component {
   constructor() {

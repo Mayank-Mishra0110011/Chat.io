@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import classnames from "classnames";
 
-import { setSelectedChannel, getServers } from "../../actions/serverAction";
-import { createChannel } from "../../actions/channelAction";
-import { setSettingsView, setSubView } from "../../actions/viewAction";
+import { setSelectedChannel, getServers } from "../../../actions/serverAction";
+import { createChannel } from "../../../actions/channelAction";
+import { setSettingsView, setSubView } from "../../../actions/viewAction";
 
 class Channels extends Component {
   constructor() {

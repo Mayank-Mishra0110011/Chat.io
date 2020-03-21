@@ -2,21 +2,21 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-import { getServers } from "../../actions/serverAction";
-import { getUserData } from "../../actions/userAction";
+import { getServers } from "../../../actions/serverAction";
+import { getUserData } from "../../../actions/userAction";
 
 import Home from "./Home";
-import Servers from "./Servers";
-import DirectMessage from "./DirectMessage";
-import CreateServer from "./CreateServer";
-import ComponentLoading from "./ComponentLoading";
-import SearchServers from "./SearchServers";
+import Servers from "../server/Servers";
+import DirectMessage from "../chat/DirectMessage";
+import CreateServer from "../server/CreateServer";
+import ComponentLoading from "../../layout/ComponentLoading";
+import SearchServers from "../server/SearchServers";
 import User from "./User";
-import DMChat from "./DMChat";
-import FriendsStatus from "./FriendsStatus";
-import SearchServersContent from "./SearchServersContent";
-import Settings from "./Settings";
-import Chat from "./Chat";
+import DMChat from "../chat/DMChat";
+import FriendsStatus from "../Friend/FriendsStatus";
+import SearchServersContent from "../server/SearchServersContent";
+import Settings from "../settings/Settings";
+import Chat from "../chat/Chat";
 
 class Dashboard extends Component {
   componentDidUpdate() {

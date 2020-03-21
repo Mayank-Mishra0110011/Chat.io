@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { setSettingsView } from "../../actions/viewAction";
-import { setStatus } from "../../actions/userAction";
+
+import { setSettingsView } from "../../../actions/viewAction";
+import { setStatus } from "../../../actions/userAction";
 
 class User extends Component {
   constructor() {

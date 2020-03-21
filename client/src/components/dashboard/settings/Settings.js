@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+
+import { unsetSettingsView, setSubView } from "../../../actions/viewAction";
+
 import UserSettings from "./UserSettings";
 import ChannelSettings from "./ChannelSettings";
-
-import { unsetSettingsView, setSubView } from "../../actions/viewAction";
 
 class Settings extends Component {
   constructor() {

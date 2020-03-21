@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import classnames from "classnames";
 
-import { createServer, getServers } from "../../actions/serverAction";
+import { createServer, getServers } from "../../../actions/serverAction";
 
 class CreateServer extends Component {
   constructor() {

@@ -6,11 +6,12 @@ import jwt_decode from "jwt-decode";
 import { setCurrentUser, logoutUser } from "./actions/authAction";
 import setAuthToken from "./utils/setAuthToken";
 import "./App.css";
+
 import PrivateRoute from "./components/layout/PrivateRoute";
 import Landing from "./components/layout/Landing";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
-import Dashboard from "./components/dashboard/Dashboard";
+import Dashboard from "./components/dashboard/user/Dashboard";
 
 if (localStorage.jwtToken) {
   setAuthToken(localStorage.jwtToken);

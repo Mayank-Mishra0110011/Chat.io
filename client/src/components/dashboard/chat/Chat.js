@@ -1,6 +1,7 @@
 import React, { Component } from "react";
+
 import DMChat from "./DMChat";
-import Members from "./Members";
+import Members from "../channel/Members";
 
 class Chat extends Component {
   render() {

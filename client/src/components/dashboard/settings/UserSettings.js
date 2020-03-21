@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-import { unsetSettingsView } from "../../actions/viewAction";
-import { logoutUser } from "../../actions/authAction";
+import { unsetSettingsView } from "../../../actions/viewAction";
+import { logoutUser } from "../../../actions/authAction";
 
 class UserSettings extends Component {
   render() {

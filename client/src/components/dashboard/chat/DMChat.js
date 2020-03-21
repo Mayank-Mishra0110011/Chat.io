@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+
 import DMChatHeader from "./DMChatHeader";
 import DMChatContent from "./DMChatContent";
 import DMChatInput from "./DMChatInput";

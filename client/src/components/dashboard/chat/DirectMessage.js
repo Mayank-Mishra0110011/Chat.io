@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { setDMView } from "../../actions/viewAction";
-import Friends from "./Friends";
-import Channels from "./Channels";
+
+import { setDMView } from "../../../actions/viewAction";
+
+import Friends from "../Friend/Friends";
+import Channels from "../channel/Channels";
 
 class DirectMessage extends Component {
   render() {

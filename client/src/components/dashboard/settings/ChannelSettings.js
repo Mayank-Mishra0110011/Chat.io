@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-import { deleteChannel } from "../../actions/channelAction";
-import { unsetSettingsView } from "../../actions/viewAction";
-import { getServers } from "../../actions/serverAction";
+import { deleteChannel } from "../../../actions/channelAction";
+import { unsetSettingsView } from "../../../actions/viewAction";
+import { getServers } from "../../../actions/serverAction";
 
 class ChannelSettings extends Component {
   constructor() {
