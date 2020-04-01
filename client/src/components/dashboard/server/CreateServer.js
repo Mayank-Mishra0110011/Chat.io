@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import classnames from "classnames";
 
 import { createServer, getServers } from "../../../actions/serverAction";
+import { setModalOrDropdownClose } from "../../../actions/viewAction";
 
 class CreateServer extends Component {
   constructor() {
@@ -55,7 +56,12 @@ class CreateServer extends Component {
     if (event.target.id === "createServerModal") this.modalClose();
   }
   modalOpen() {
-    let modal = document.getElementById("createServerModal");
+    const func = this.props.currentView.modalOrDropdownFunctionReference;
+    if (func) {
+      func();
+      this.props.setModalOrDropdownClose();
+    }
+    const modal = document.getElementById("createServerModal");
     modal.classList.add("show");
     modal.style.display = "block";
     modal.style.opacity = "1";
@@ -68,7 +74,7 @@ class CreateServer extends Component {
       invite: "",
       serverName: ""
     });
-    let modal = document.getElementById("createServerModal");
+    const modal = document.getElementById("createServerModal");
     if (modal) {
       modal.classList.remove("show");
       modal.style.display = "none";
@@ -428,13 +434,18 @@ class CreateServer extends Component {
 CreateServer.propTypes = {
   createServer: PropTypes.func.isRequired,
   getServers: PropTypes.func.isRequired,
-  errors: PropTypes.object.isRequired
+  errors: PropTypes.object.isRequired,
+  setModalOrDropdownClose: PropTypes.func.isRequired,
+  currentView: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-  errors: state.errors
+  errors: state.errors,
+  currentView: state.currentView
 });
 
-export default connect(mapStateToProps, { createServer, getServers })(
-  CreateServer
-);
+export default connect(mapStateToProps, {
+  createServer,
+  getServers,
+  setModalOrDropdownClose
+})(CreateServer);

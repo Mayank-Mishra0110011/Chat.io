@@ -2,12 +2,17 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-import { setSettingsView } from "../../../actions/viewAction";
+import {
+  setSettingsView,
+  setModalOrDropdownOpen,
+  setModalOrDropdownClose
+} from "../../../actions/viewAction";
 import { setStatus } from "../../../actions/userAction";
 
 class User extends Component {
   constructor() {
     super();
+    this.showStatusOptions = this.showStatusOptions.bind(this);
     this.showUserSettings = this.showUserSettings.bind(this);
   }
   showUserSettings() {
@@ -92,8 +97,14 @@ class User extends Component {
     });
   }
   showStatusOptions() {
-    let div = document.getElementsByClassName("change-status")[0];
+    const func = this.props.currentView.modalOrDropdownFunctionReference;
+    if (func && func !== this.showStatusOptions) {
+      func();
+      this.props.setModalOrDropdownClose();
+    }
+    const div = document.getElementsByClassName("change-status")[0];
     if (div.style.height === "44vh") {
+      this.props.setModalOrDropdownClose();
       div.style.zIndex = -10;
       window.TweenMax.to(div, 0.3, {
         height: "0",
@@ -104,6 +115,7 @@ class User extends Component {
         ease: window.Power0.easeOut
       });
     } else {
+      this.props.setModalOrDropdownOpen(this.showStatusOptions);
       div.style.zIndex = 10;
       window.TweenMax.to(div, 0.1, {
         height: "44vh",
@@ -292,11 +304,20 @@ class User extends Component {
 User.propTypes = {
   user: PropTypes.object.isRequired,
   setSettingsView: PropTypes.func.isRequired,
-  setStatus: PropTypes.func.isRequired
+  setStatus: PropTypes.func.isRequired,
+  currentView: PropTypes.object.isRequired,
+  setModalOrDropdownOpen: PropTypes.func.isRequired,
+  setModalOrDropdownClose: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  user: state.user
+  user: state.user,
+  currentView: state.currentView
 });
 
-export default connect(mapStateToProps, { setSettingsView, setStatus })(User);
+export default connect(mapStateToProps, {
+  setSettingsView,
+  setStatus,
+  setModalOrDropdownOpen,
+  setModalOrDropdownClose
+})(User);

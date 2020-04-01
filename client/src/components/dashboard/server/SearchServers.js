@@ -37,4 +37,6 @@ const mapStateToProps = state => ({
   currentView: state.currentView
 });
 
-export default connect(mapStateToProps, { setSearchView })(SearchServers);
+export default connect(mapStateToProps, {
+  setSearchView
+})(SearchServers);

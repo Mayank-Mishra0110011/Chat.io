@@ -3,9 +3,16 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import classnames from "classnames";
 
+import ServerDropDown from "../server/ServerDropdown";
+
 import { setSelectedChannel, getServers } from "../../../actions/serverAction";
 import { createChannel } from "../../../actions/channelAction";
-import { setSettingsView, setSubView } from "../../../actions/viewAction";
+import {
+  setSettingsView,
+  setSubView,
+  setModalOrDropdownOpen,
+  setModalOrDropdownClose
+} from "../../../actions/viewAction";
 
 class Channels extends Component {
   constructor() {
@@ -22,6 +29,9 @@ class Channels extends Component {
     this.openChannelSettings = this.openChannelSettings.bind(this);
     this.clickListener = this.clickListener.bind(this);
     this.selectOption = this.selectOption.bind(this);
+    this.openServerSettingsDropdown = this.openServerSettingsDropdown.bind(
+      this
+    );
     document.addEventListener("keydown", this.handleEsc);
   }
   openChannelSettings(data) {
@@ -69,6 +79,41 @@ class Channels extends Component {
   }
   clickListener(event) {
     if (event.target.id === "createChannelModal") this.modalClose();
+  }
+  openServerSettingsDropdown() {
+    const func = this.props.currentView.modalOrDropdownFunctionReference;
+    if (func && func !== this.openServerSettingsDropdown) {
+      func();
+      this.props.setModalOrDropdownClose();
+    }
+    const div = document.getElementsByClassName("server-setting-dropdown")[0];
+    const caret = document.getElementById("caret");
+    if (div.style.height === "20.3rem") {
+      if (caret.src.includes("caretUp")) {
+        caret.src = caret.src.replace("caretUp", "caretDown");
+      }
+      this.props.setModalOrDropdownClose();
+      div.style.zIndex = -10;
+      window.TweenMax.to(div, 0.3, {
+        height: "0",
+        ease: window.Power0.easeOut
+      });
+      window.TweenMax.to(div, 0.1, {
+        autoAlpha: 0,
+        ease: window.Power0.easeOut
+      });
+    } else {
+      this.props.setModalOrDropdownOpen(this.openServerSettingsDropdown);
+      div.style.zIndex = 10;
+      window.TweenMax.to(div, 0, {
+        height: "20.3rem",
+        ease: window.Power0.easeIn
+      });
+      window.TweenMax.to(div, 0.2, {
+        autoAlpha: 1,
+        ease: window.Power0.easeIn
+      });
+    }
   }
   componentDidMount() {
     [...document.getElementsByClassName("cb-wrapper")].forEach(cb => {
@@ -128,7 +173,6 @@ class Channels extends Component {
       ) {
         document.title = "#" + servers[selectedServer].channels[i].name;
       }
-
       switch (servers[selectedServer].channels[i].type) {
         case "text":
           textChannels.push(
@@ -344,7 +388,10 @@ class Channels extends Component {
     const { errors } = this.props;
     return (
       <div>
-        <div className="friends serverTile align-items-start">
+        <div
+          className="friends serverTile align-items-start"
+          style={{ position: "relative" }}
+        >
           <div
             className="d-flex align-items-center"
             style={{
@@ -352,6 +399,15 @@ class Channels extends Component {
               height: "90%",
               cursor: "pointer",
               borderBottom: "1px solid #222427"
+            }}
+            onClick={() => {
+              const caret = document.getElementById("caret");
+              if (caret.src.includes("caretUp")) {
+                caret.src = caret.src.replace("caretUp", "caretDown");
+              } else {
+                caret.src = caret.src.replace("caretDown", "caretUp");
+              }
+              this.openServerSettingsDropdown();
             }}
           >
             <div className="d-flex align-items-center add ml-3">
@@ -362,12 +418,14 @@ class Channels extends Component {
                 <img
                   src="./assets/image/caretDown.png"
                   alt="sp1"
+                  id="caret"
                   className="img-fluid"
                 />
               </div>
             </div>
           </div>
         </div>
+        <ServerDropDown></ServerDropDown>
         <div className="friends" style={{ height: "8vh", width: "100%" }}>
           <div
             className="d-flex align-items-start"
@@ -679,12 +737,16 @@ Channels.propTypes = {
   createChannel: PropTypes.func.isRequired,
   getServers: PropTypes.func.isRequired,
   setSettingsView: PropTypes.func.isRequired,
-  setSubView: PropTypes.func.isRequired
+  setSubView: PropTypes.func.isRequired,
+  currentView: PropTypes.object.isRequired,
+  setModalOrDropdownOpen: PropTypes.func.isRequired,
+  setModalOrDropdownClose: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   servers: state.servers,
-  errors: state.errors
+  errors: state.errors,
+  currentView: state.currentView
 });
 
 export default connect(mapStateToProps, {
@@ -692,5 +754,7 @@ export default connect(mapStateToProps, {
   createChannel,
   getServers,
   setSettingsView,
-  setSubView
+  setSubView,
+  setModalOrDropdownOpen,
+  setModalOrDropdownClose
 })(Channels);

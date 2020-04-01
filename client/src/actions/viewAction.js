@@ -5,7 +5,9 @@ import {
   SET_SEARCH_VIEW,
   SET_SETTINGS_VIEW,
   UNSET_SETTINGS_VIEW,
-  SET_SUB_VIEW
+  SET_SUB_VIEW,
+  SET_MODAL_OR_DROPDOWN_OPEN,
+  SET_MODAL_OR_DROPDOWN_CLOSE
 } from "./types";
 
 export const setDefaultView = () => dispatch => {
@@ -57,5 +59,19 @@ export const setSubView = view => dispatch => {
   dispatch({
     type: SET_SUB_VIEW,
     payload: view
+  });
+};
+
+export const setModalOrDropdownOpen = functionReference => dispatch => {
+  dispatch({
+    type: SET_MODAL_OR_DROPDOWN_OPEN,
+    payload: functionReference
+  });
+};
+
+export const setModalOrDropdownClose = () => dispatch => {
+  dispatch({
+    type: SET_MODAL_OR_DROPDOWN_CLOSE,
+    payload: null
   });
 };

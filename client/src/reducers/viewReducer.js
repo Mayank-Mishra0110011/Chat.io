@@ -5,7 +5,9 @@ import {
   SET_SEARCH_VIEW,
   SET_SETTINGS_VIEW,
   UNSET_SETTINGS_VIEW,
-  SET_SUB_VIEW
+  SET_SUB_VIEW,
+  SET_MODAL_OR_DROPDOWN_OPEN,
+  SET_MODAL_OR_DROPDOWN_CLOSE
 } from "../actions/types";
 
 const initialState = {
@@ -13,7 +15,8 @@ const initialState = {
   subView: null,
   subViewData: null,
   previousView: null,
-  selected: "0"
+  selected: "0",
+  modalOrDropdownFunctionReference: null
 };
 
 export default function(state = initialState, action) {
@@ -45,6 +48,16 @@ export default function(state = initialState, action) {
       ...state,
       view: state.previousView,
       previousView: action.payload
+    };
+  } else if (action.type === SET_MODAL_OR_DROPDOWN_OPEN) {
+    return {
+      ...state,
+      modalOrDropdownFunctionReference: action.payload
+    };
+  } else if (action.type === SET_MODAL_OR_DROPDOWN_CLOSE) {
+    return {
+      ...state,
+      modalOrDropdownFunctionReference: action.payload
     };
   } else if (action.type === SET_SUB_VIEW) {
     return {
