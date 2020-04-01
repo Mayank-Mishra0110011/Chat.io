@@ -97,7 +97,8 @@ class User extends Component {
     });
   }
   showStatusOptions() {
-    const func = this.props.currentView.modalOrDropdownFunctionReference;
+    const func = this.props.currentView.funcRefs
+      .modalOrDropdownFunctionReference;
     if (func && func !== this.showStatusOptions) {
       func();
       this.props.setModalOrDropdownClose();

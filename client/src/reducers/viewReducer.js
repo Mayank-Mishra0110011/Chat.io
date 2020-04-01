@@ -16,7 +16,9 @@ const initialState = {
   subViewData: null,
   previousView: null,
   selected: "0",
-  modalOrDropdownFunctionReference: null
+  funcRefs: {
+    modalOrDropdownFunctionReference: null
+  }
 };
 
 export default function(state = initialState, action) {
@@ -52,12 +54,18 @@ export default function(state = initialState, action) {
   } else if (action.type === SET_MODAL_OR_DROPDOWN_OPEN) {
     return {
       ...state,
-      modalOrDropdownFunctionReference: action.payload
+      funcRefs: {
+        ...state.funcRefs,
+        modalOrDropdownFunctionReference: action.payload
+      }
     };
   } else if (action.type === SET_MODAL_OR_DROPDOWN_CLOSE) {
     return {
       ...state,
-      modalOrDropdownFunctionReference: action.payload
+      funcRefs: {
+        ...state.funcRefs,
+        modalOrDropdownFunctionReference: action.payload
+      }
     };
   } else if (action.type === SET_SUB_VIEW) {
     return {

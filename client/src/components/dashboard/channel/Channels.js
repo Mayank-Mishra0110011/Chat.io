@@ -56,16 +56,21 @@ class Channels extends Component {
       })
       .catch(() => {});
   }
-  modalOpen(type) {
-    document.getElementById("channel-type").innerText = type;
-    let modal = document.getElementById("createChannelModal");
+  modalOpen() {
+    const func = this.props.currentView.funcRefs
+      .modalOrDropdownFunctionReference;
+    if (func) {
+      func();
+      this.props.setModalOrDropdownClose();
+    }
+    const modal = document.getElementById("createChannelModal");
     modal.classList.add("show");
     modal.style.display = "block";
     modal.style.opacity = "1";
     document.addEventListener("click", this.clickListener);
   }
   modalClose() {
-    let modal = document.getElementById("createChannelModal");
+    const modal = document.getElementById("createChannelModal");
     this.setState({ channelType: "text", channelName: "" });
     if (modal) {
       modal.classList.remove("show");
@@ -75,20 +80,23 @@ class Channels extends Component {
     }
   }
   selectOption(type) {
+    document.getElementById("selected-channel").innerText = type;
+    document.getElementById("channel-type").innerText = type.toUpperCase();
     this.setState({ channelType: type });
   }
   clickListener(event) {
     if (event.target.id === "createChannelModal") this.modalClose();
   }
   openServerSettingsDropdown() {
-    const func = this.props.currentView.modalOrDropdownFunctionReference;
+    const func = this.props.currentView.funcRefs
+      .modalOrDropdownFunctionReference;
     if (func && func !== this.openServerSettingsDropdown) {
       func();
       this.props.setModalOrDropdownClose();
     }
     const div = document.getElementsByClassName("server-setting-dropdown")[0];
     const caret = document.getElementById("caret");
-    if (div.style.height === "20.3rem") {
+    if (div.style.height === "17.4rem") {
       if (caret.src.includes("caretUp")) {
         caret.src = caret.src.replace("caretUp", "caretDown");
       }
@@ -106,7 +114,7 @@ class Channels extends Component {
       this.props.setModalOrDropdownOpen(this.openServerSettingsDropdown);
       div.style.zIndex = 10;
       window.TweenMax.to(div, 0, {
-        height: "20.3rem",
+        height: "17.4rem",
         ease: window.Power0.easeIn
       });
       window.TweenMax.to(div, 0.2, {
@@ -295,6 +303,7 @@ class Channels extends Component {
                         visibility: "hidden"
                       }}
                       onClick={this.openChannelSettings.bind(this, {
+                        serverID: servers[selectedServer]._id,
                         name: servers[selectedServer].channels[i].name,
                         id: servers[selectedServer].channels[i]._id,
                         type: "audio"
@@ -364,6 +373,7 @@ class Channels extends Component {
                         visibility: "hidden"
                       }}
                       onClick={this.openChannelSettings.bind(this, {
+                        serverID: servers[selectedServer]._id,
                         name: servers[selectedServer].channels[i].name,
                         id: servers[selectedServer].channels[i]._id,
                         type: "video"
@@ -450,8 +460,13 @@ class Channels extends Component {
               </div>
               <div className="d-flex justify-content-end" style={{ flex: "1" }}>
                 <div
+                  id="dropref"
                   className="o-options d-flex align-items-center not-option add"
-                  onClick={this.modalOpen.bind(this, "Text")}
+                  onClick={() => {
+                    this.selectOption("text");
+                    document.getElementById("text").click();
+                    this.modalOpen();
+                  }}
                 >
                   <img
                     src="./assets/image/add.png"
@@ -489,7 +504,11 @@ class Channels extends Component {
               <div className="d-flex justify-content-end" style={{ flex: "1" }}>
                 <div
                   className="o-options d-flex align-items-center not-option add"
-                  onClick={this.modalOpen.bind(this, "Audio")}
+                  onClick={() => {
+                    this.selectOption("audio");
+                    document.getElementById("audio").click();
+                    this.modalOpen();
+                  }}
                 >
                   <img
                     src="./assets/image/add.png"
@@ -527,7 +546,11 @@ class Channels extends Component {
               <div className="d-flex justify-content-end" style={{ flex: "1" }}>
                 <div
                   className="o-options d-flex align-items-center not-option add"
-                  onClick={this.modalOpen.bind(this, "Video")}
+                  onClick={() => {
+                    this.selectOption("video");
+                    document.getElementById("video").click();
+                    this.modalOpen();
+                  }}
                 >
                   <img
                     src="./assets/image/add.png"
@@ -558,10 +581,10 @@ class Channels extends Component {
                   style={{ width: "100%" }}
                 >
                   <p className="modal-title" style={{ fontWeight: "bold" }}>
-                    CREATE TEXT CHANNEL
+                    CREATE <span id="channel-type"></span> CHANNEL
                   </p>
                   <p className="friendstext" style={{ fontSize: "small" }}>
-                    in <span id="channel-type"></span> Channels
+                    in <span id="selected-channel"></span> Channels
                   </p>
                 </div>
               </div>
@@ -575,6 +598,7 @@ class Channels extends Component {
                 <div
                   className="d-flex form-control align-items-center py-4 cb-wrapper cb-selected"
                   style={{ overflow: "hidden" }}
+                  id="text"
                   onClick={this.selectOption.bind(this, "text")}
                 >
                   <div className="cb d-flex justify-content-center align-items-center cb-checked">
@@ -608,6 +632,7 @@ class Channels extends Component {
                 <div
                   className="d-flex form-control align-items-center py-4 cb-wrapper mt-2"
                   style={{ overflow: "hidden" }}
+                  id="audio"
                   onClick={this.selectOption.bind(this, "audio")}
                 >
                   <div className="cb d-flex justify-content-center align-items-center cb-unchecked">
@@ -642,6 +667,7 @@ class Channels extends Component {
                 <div
                   className="d-flex form-control align-items-center py-4 cb-wrapper mt-2"
                   style={{ overflow: "hidden" }}
+                  id="video"
                   onClick={this.selectOption.bind(this, "video")}
                 >
                   <div className="cb d-flex justify-content-center align-items-center cb-unchecked">

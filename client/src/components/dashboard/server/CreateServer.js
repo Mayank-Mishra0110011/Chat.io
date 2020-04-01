@@ -56,7 +56,8 @@ class CreateServer extends Component {
     if (event.target.id === "createServerModal") this.modalClose();
   }
   modalOpen() {
-    const func = this.props.currentView.modalOrDropdownFunctionReference;
+    const func = this.props.currentView.funcRefs
+      .modalOrDropdownFunctionReference;
     if (func) {
       func();
       this.props.setModalOrDropdownClose();

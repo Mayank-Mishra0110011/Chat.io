@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
+import { setModalOrDropdownClose } from "../../../actions/viewAction";
+
 class ServerChatHeader extends Component {
   constructor() {
     super();
@@ -16,14 +18,20 @@ class ServerChatHeader extends Component {
     if (event.target.id === "aboutModal") this.modalClose();
   }
   modalOpen() {
-    let modal = document.getElementById("aboutModal");
+    const func = this.props.currentView.funcRefs
+      .modalOrDropdownFunctionReference;
+    if (func) {
+      func();
+      this.props.setModalOrDropdownClose();
+    }
+    const modal = document.getElementById("aboutModal");
     modal.classList.add("show");
     modal.style.display = "block";
     modal.style.opacity = "1";
     document.addEventListener("click", this.clickListener);
   }
   modalClose() {
-    let modal = document.getElementById("aboutModal");
+    const modal = document.getElementById("aboutModal");
     if (modal) {
       modal.classList.remove("show");
       modal.style.display = "none";
@@ -164,7 +172,8 @@ class ServerChatHeader extends Component {
 
 ServerChatHeader.propTypes = {
   currentView: PropTypes.object.isRequired,
-  servers: PropTypes.object.isRequired
+  servers: PropTypes.object.isRequired,
+  setModalOrDropdownClose: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -172,4 +181,6 @@ const mapStateToProps = state => ({
   servers: state.servers
 });
 
-export default connect(mapStateToProps)(ServerChatHeader);
+export default connect(mapStateToProps, { setModalOrDropdownClose })(
+  ServerChatHeader
+);

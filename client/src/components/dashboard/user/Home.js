@@ -2,7 +2,10 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-import { setDefaultView } from "../../../actions/viewAction";
+import {
+  setDefaultView,
+  setModalOrDropdownClose
+} from "../../../actions/viewAction";
 
 class Home extends Component {
   render() {
@@ -21,7 +24,15 @@ class Home extends Component {
             data-placement="right"
             title="Home"
             id="home"
-            onClick={this.props.setDefaultView}
+            onClick={() => {
+              const func = this.props.currentView.funcRefs
+                .modalOrDropdownFunctionReference;
+              if (func) {
+                func();
+                this.props.setModalOrDropdownClose();
+              }
+              this.props.setDefaultView();
+            }}
           >
             <img src="./favicon.ico" alt="logoico" className="img-fluid" />
           </div>
@@ -33,11 +44,15 @@ class Home extends Component {
 
 Home.propTypes = {
   currentView: PropTypes.object.isRequired,
-  setDefaultView: PropTypes.func.isRequired
+  setDefaultView: PropTypes.func.isRequired,
+  setModalOrDropdownClose: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   currentView: state.currentView
 });
 
-export default connect(mapStateToProps, { setDefaultView })(Home);
+export default connect(mapStateToProps, {
+  setDefaultView,
+  setModalOrDropdownClose
+})(Home);

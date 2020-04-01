@@ -13,7 +13,8 @@ class Servers extends Component {
     this.clickHandler = this.clickHandler.bind(this);
   }
   clickHandler() {
-    const func = this.props.currentView.modalOrDropdownFunctionReference;
+    const func = this.props.currentView.funcRefs
+      .modalOrDropdownFunctionReference;
     if (func) {
       func();
       this.props.setModalOrDropdownClose();

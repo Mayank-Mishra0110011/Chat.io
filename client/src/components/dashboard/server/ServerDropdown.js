@@ -6,7 +6,7 @@ class ServerDropdown extends Component {
       <div className="server-setting-dropdown">
         <div className="friends" style={{ height: "7vh" }}>
           <div
-            className={"status-option d-flex mt-1"}
+            className={"server-option d-flex mt-1"}
             style={{ borderRadius: "3px" }}
           >
             <div
@@ -46,7 +46,7 @@ class ServerDropdown extends Component {
         </div>
         <div className="friends" style={{ height: "7vh" }}>
           <div
-            className={"status-option d-flex mt-1"}
+            className={"server-option d-flex mt-1"}
             style={{ borderRadius: "3px" }}
           >
             <div
@@ -76,8 +76,11 @@ class ServerDropdown extends Component {
         </div>
         <div className="friends" style={{ height: "7vh" }}>
           <div
-            className={"status-option d-flex mt-1"}
+            className={"server-option d-flex mt-1"}
             style={{ borderRadius: "3px" }}
+            onClick={() => {
+              document.getElementById("dropref").click();
+            }}
           >
             <div
               style={{ width: "100%", height: "100%" }}
@@ -104,42 +107,6 @@ class ServerDropdown extends Component {
             </div>
           </div>
         </div>
-        <div className="friends" style={{ height: "7vh" }}>
-          <div
-            className={"status-option d-flex mt-1"}
-            style={{ borderRadius: "3px" }}
-          >
-            <div
-              style={{ width: "100%", height: "100%" }}
-              className="d-flex align-items-center"
-            >
-              <div className="d-flex align-items-center ml-2">
-                <p className="friendstext">Create Category</p>
-              </div>
-              <div
-                className="d-flex justify-content-end align-items-center"
-                style={{
-                  flex: "1",
-                  height: "100%"
-                }}
-              >
-                <div className="o-options d-flex justify-content-end align-items-center not-option mr-2">
-                  <svg
-                    aria-hidden="false"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      fill="#8e9297"
-                      d="M20 7H12L10.553 5.106C10.214 4.428 9.521 4 8.764 4H3C2.447 4 2 4.447 2 5V19C2 20.104 2.895 21 4 21H20C21.104 21 22 20.104 22 19V9C22 7.896 21.104 7 20 7ZM16 15H13V18H11V15H8V13H11V10H13V13H16V15Z"
-                    ></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
         <div className="d-flex justify-content-center mt-1">
           <div
             className="d-flex align-items-center justify-content-start"
@@ -152,7 +119,7 @@ class ServerDropdown extends Component {
         </div>
         <div className="friends" style={{ height: "7vh" }}>
           <div
-            className={"status-option d-flex mt-1"}
+            className={"server-option d-flex mt-1"}
             style={{ borderRadius: "3px" }}
           >
             <div
@@ -191,7 +158,7 @@ class ServerDropdown extends Component {
         </div>
         <div className="friends" style={{ height: "7vh" }}>
           <div
-            className={"status-option d-flex mt-1"}
+            className={"server-option d-flex mt-1"}
             style={{ borderRadius: "3px" }}
           >
             <div
@@ -237,7 +204,7 @@ class ServerDropdown extends Component {
         </div>
         <div className="friends" style={{ height: "7vh" }}>
           <div
-            className={"status-option d-flex mt-1"}
+            className={"server-option d-flex mt-1"}
             style={{ borderRadius: "3px" }}
           >
             <div
@@ -255,17 +222,24 @@ class ServerDropdown extends Component {
                 }}
               >
                 <div className="o-options d-flex justify-content-end align-items-center not-option mr-2">
-                  <svg
-                    aria-hidden="false"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      fill="#8e9297"
-                      d="M19 6.00001C15.56 6.00001 12.826 2.43501 12.799 2.39801C12.421 1.89801 11.579 1.89801 11.201 2.39801C11.174 2.43501 8.44 6.00001 5 6.00001C4.447 6.00001 4 6.44801 4 7.00001V14C4 17.807 10.764 21.478 11.534 21.884C11.68 21.961 11.84 21.998 12 21.998C12.16 21.998 12.32 21.96 12.466 21.884C13.236 21.478 20 17.807 20 14V7.00001C20 6.44801 19.553 6.00001 19 6.00001ZM15 16L12 14L9 16L10 13L8 11H11L12 8.00001L13 11H16L14 13L15 16Z"
-                    ></path>
-                  </svg>
+                  <div className="cb d-flex justify-content-center align-items-center cb-unchecked">
+                    <svg
+                      name="Checkmark"
+                      aria-hidden="true"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 18 18"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g fill="none" fillRule="evenodd">
+                        <polyline
+                          stroke="transparent"
+                          strokeWidth="2"
+                          points="3.5 9.5 7 13 15 5"
+                        ></polyline>
+                      </g>
+                    </svg>
+                  </div>
                 </div>
               </div>
             </div>

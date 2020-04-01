@@ -339,6 +339,7 @@
 
 .friendsbox,
 .status-option,
+.server-option,
 .friend-option,
 #addFriend {
   width: 95%;
@@ -507,7 +508,8 @@
   overflow: hidden;
 }
 
-.status-option:hover {
+.status-option:hover,
+.server-option:hover {
   background-color: rgba(79, 84, 92, 0.32);
 }
 
