@@ -2,10 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-import {
-  setServerView,
-  setModalOrDropdownClose
-} from "../../../actions/viewAction";
+import { setServerView } from "../../../actions/viewAction";
 
 class Servers extends Component {
   constructor() {
@@ -13,12 +10,7 @@ class Servers extends Component {
     this.clickHandler = this.clickHandler.bind(this);
   }
   clickHandler() {
-    const func = this.props.currentView.funcRefs
-      .modalOrDropdownFunctionReference;
-    if (func) {
-      func();
-      this.props.setModalOrDropdownClose();
-    }
+    this.props.removeFunctionReference("modalFunc");
     this.props.setServerView(this.props.id);
   }
   render() {
@@ -47,14 +39,12 @@ class Servers extends Component {
 Servers.propTypes = {
   currentView: PropTypes.object.isRequired,
   setServerView: PropTypes.func.isRequired,
-  setModalOrDropdownClose: PropTypes.func.isRequired
 };
 
-const mapStateToProps = state => ({
-  currentView: state.currentView
+const mapStateToProps = (state) => ({
+  currentView: state.currentView,
 });
 
 export default connect(mapStateToProps, {
   setServerView,
-  setModalOrDropdownClose
 })(Servers);

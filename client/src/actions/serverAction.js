@@ -3,44 +3,46 @@ import {
   GET_ERRORS,
   SERVERS_LOADING,
   CREATE_SERVER,
-  SET_SELECTED_CHANNEL
+  SET_SELECTED_CHANNEL,
+  UPDATE_USERS,
+  ADD_USER,
 } from "./types";
 import axios from "axios";
 
-export const getServers = () => dispatch => {
+export const getServers = () => (dispatch) => {
   dispatch(setServersLoading());
   axios
     .get("http://localhost:5000/server")
-    .then(res => {
+    .then((res) => {
       dispatch({
         type: GET_SERVERS,
-        payload: res.data
+        payload: res.data,
       });
     })
     .catch(() =>
       dispatch({
         type: GET_SERVERS,
-        payload: {}
+        payload: {},
       })
     );
 };
 
-export const createServer = serverInfo => dispatch => {
+export const createServer = (serverInfo) => (dispatch) => {
   return new Promise((resolve, reject) => {
     axios
       .post("http://localhost:5000/server/create", serverInfo)
-      .then(res => {
+      .then((res) => {
         resolve();
         dispatch({
           type: CREATE_SERVER,
-          payload: res.data
+          payload: res.data,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         reject();
         dispatch({
           type: GET_ERRORS,
-          payload: err.response.data
+          payload: err.response.data,
         });
       });
   });
@@ -48,18 +50,44 @@ export const createServer = serverInfo => dispatch => {
 
 export const setServersLoading = () => {
   return {
-    type: SERVERS_LOADING
+    type: SERVERS_LOADING,
   };
 };
 
-export const setSelectedChannel = (dataObject, selectedServer) => dispatch => {
+export const setSelectedChannel = (dataObject, selectedServer) => (
+  dispatch
+) => {
   axios.post("http://localhost:5000/server/channel", dataObject).then(() => {
     dispatch({
       type: SET_SELECTED_CHANNEL,
       payload: {
         selectedServer: selectedServer,
-        channelID: dataObject.channelID
-      }
+        channelID: dataObject.channelID,
+      },
+    });
+  });
+};
+
+export const updateUsers = (serverID, userID, userStatus) => (dispatch) => {
+  dispatch({
+    type: UPDATE_USERS,
+    payload: {
+      serverID,
+      userID,
+      userStatus,
+    },
+  });
+};
+
+export const addUser = (serverID, userID) => (dispatch) => {
+  axios.post("http://localhost:5000/user/info", { id: userID }).then((user) => {
+    const userInfo = user.data.info;
+    dispatch({
+      type: ADD_USER,
+      payload: {
+        serverID,
+        userInfo,
+      },
     });
   });
 };

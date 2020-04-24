@@ -6,72 +6,56 @@ import {
   SET_SETTINGS_VIEW,
   UNSET_SETTINGS_VIEW,
   SET_SUB_VIEW,
-  SET_MODAL_OR_DROPDOWN_OPEN,
-  SET_MODAL_OR_DROPDOWN_CLOSE
 } from "./types";
 
-export const setDefaultView = () => dispatch => {
+export const setDefaultView = () => (dispatch) => {
   dispatch({
     type: SET_DEFAULT_VIEW,
-    payload: "default"
+    payload: "default",
   });
 };
 
-export const setDMView = () => dispatch => {
+export const setDMView = () => (dispatch) => {
   dispatch({
     type: SET_DM_VIEW,
-    payload: "dm"
+    payload: "dm",
   });
 };
 
-export const setServerView = serverID => dispatch => {
+export const setServerView = (serverID) => (dispatch) => {
   dispatch({
     type: SET_SERVER_VIEW,
     payload: {
       view: "server",
-      id: serverID
-    }
+      id: serverID,
+    },
   });
 };
 
-export const setSearchView = () => dispatch => {
+export const setSearchView = () => (dispatch) => {
   dispatch({
     type: SET_SEARCH_VIEW,
-    payload: "search"
+    payload: "search",
   });
 };
 
-export const setSettingsView = () => dispatch => {
+export const setSettingsView = () => (dispatch) => {
   dispatch({
     type: SET_SETTINGS_VIEW,
-    payload: "settings"
+    payload: "settings",
   });
 };
 
-export const unsetSettingsView = () => dispatch => {
+export const unsetSettingsView = () => (dispatch) => {
   dispatch({
     type: UNSET_SETTINGS_VIEW,
-    payload: null
+    payload: null,
   });
 };
 
-export const setSubView = view => dispatch => {
+export const setSubView = (view) => (dispatch) => {
   dispatch({
     type: SET_SUB_VIEW,
-    payload: view
-  });
-};
-
-export const setModalOrDropdownOpen = functionReference => dispatch => {
-  dispatch({
-    type: SET_MODAL_OR_DROPDOWN_OPEN,
-    payload: functionReference
-  });
-};
-
-export const setModalOrDropdownClose = () => dispatch => {
-  dispatch({
-    type: SET_MODAL_OR_DROPDOWN_CLOSE,
-    payload: null
+    payload: view,
   });
 };

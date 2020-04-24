@@ -21,7 +21,7 @@ class Settings extends Component {
       this.props.unsetSettingsView();
       this.props.setSubView({
         subView: null,
-        subViewData: null
+        subViewData: null,
       });
     }
   }
@@ -29,7 +29,11 @@ class Settings extends Component {
     const { subView } = this.props.currentView;
     return (
       <>
-        {subView === "channel" ? <ChannelSettings /> : <UserSettings />}
+        {subView === "channel" ? (
+          <ChannelSettings />
+        ) : (
+          <UserSettings disconnect={this.props.disconnect} />
+        )}
         <div className="esc d-flex flex-column justify-content-center align-items-center">
           <div
             className="d-flex close-settings"
@@ -56,7 +60,7 @@ class Settings extends Component {
             style={{
               color: "#72767d",
               fontWeight: "bold",
-              letterSpacing: "1px"
+              letterSpacing: "1px",
             }}
           >
             Esc
@@ -69,7 +73,7 @@ class Settings extends Component {
             backgroundColor: "transparent",
             top: "0",
             left: "20rem",
-            position: "absolute"
+            position: "absolute",
           }}
         >
           {/* inner container */}
@@ -83,11 +87,11 @@ class Settings extends Component {
 Settings.propTypes = {
   currentView: PropTypes.object.isRequired,
   unsetSettingsView: PropTypes.func.isRequired,
-  setSubView: PropTypes.func.isRequired
+  setSubView: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
-  currentView: state.currentView
+const mapStateToProps = (state) => ({
+  currentView: state.currentView,
 });
 
 export default connect(mapStateToProps, { unsetSettingsView, setSubView })(

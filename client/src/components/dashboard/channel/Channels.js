@@ -4,22 +4,18 @@ import { connect } from "react-redux";
 import classnames from "classnames";
 
 import ServerDropDown from "../server/ServerDropdown";
+import Invite from "../server/Invite";
 
 import { setSelectedChannel, getServers } from "../../../actions/serverAction";
 import { createChannel } from "../../../actions/channelAction";
-import {
-  setSettingsView,
-  setSubView,
-  setModalOrDropdownOpen,
-  setModalOrDropdownClose
-} from "../../../actions/viewAction";
+import { setSettingsView, setSubView } from "../../../actions/viewAction";
 
 class Channels extends Component {
   constructor() {
     super();
     this.state = {
       channelType: "text",
-      channelName: ""
+      channelName: "",
     };
     this.clickHandler = this.clickHandler.bind(this);
     this.createChannel = this.createChannel.bind(this);
@@ -37,7 +33,7 @@ class Channels extends Component {
   openChannelSettings(data) {
     this.props.setSubView({
       subView: "channel",
-      subViewData: data
+      subViewData: data,
     });
     this.props.setSettingsView();
   }
@@ -49,7 +45,7 @@ class Channels extends Component {
       .createChannel({
         channelName: this.state.channelName,
         channelType: this.state.channelType,
-        serverID: thisServer
+        serverID: thisServer,
       })
       .then(() => {
         this.props.getServers();
@@ -57,12 +53,7 @@ class Channels extends Component {
       .catch(() => {});
   }
   modalOpen() {
-    const func = this.props.currentView.funcRefs
-      .modalOrDropdownFunctionReference;
-    if (func) {
-      func();
-      this.props.setModalOrDropdownClose();
-    }
+    this.props.removeFunctionReference("modalFunc");
     const modal = document.getElementById("createChannelModal");
     modal.classList.add("show");
     modal.style.display = "block";
@@ -88,44 +79,44 @@ class Channels extends Component {
     if (event.target.id === "createChannelModal") this.modalClose();
   }
   openServerSettingsDropdown() {
-    const func = this.props.currentView.funcRefs
-      .modalOrDropdownFunctionReference;
-    if (func && func !== this.openServerSettingsDropdown) {
-      func();
-      this.props.setModalOrDropdownClose();
-    }
+    this.props.removeFunctionReference(
+      "modalFunc",
+      this.openServerSettingsDropdown
+    );
     const div = document.getElementsByClassName("server-setting-dropdown")[0];
     const caret = document.getElementById("caret");
     if (div.style.height === "17.4rem") {
       if (caret.src.includes("caretUp")) {
         caret.src = caret.src.replace("caretUp", "caretDown");
       }
-      this.props.setModalOrDropdownClose();
       div.style.zIndex = -10;
       window.TweenMax.to(div, 0.3, {
         height: "0",
-        ease: window.Power0.easeOut
+        ease: window.Power0.easeOut,
       });
       window.TweenMax.to(div, 0.1, {
         autoAlpha: 0,
-        ease: window.Power0.easeOut
+        ease: window.Power0.easeOut,
       });
     } else {
-      this.props.setModalOrDropdownOpen(this.openServerSettingsDropdown);
+      this.props.setFunctionReference(
+        "modalFunc",
+        this.openServerSettingsDropdown
+      );
       div.style.zIndex = 10;
       window.TweenMax.to(div, 0, {
         height: "17.4rem",
-        ease: window.Power0.easeIn
+        ease: window.Power0.easeIn,
       });
       window.TweenMax.to(div, 0.2, {
         autoAlpha: 1,
-        ease: window.Power0.easeIn
+        ease: window.Power0.easeIn,
       });
     }
   }
   componentDidMount() {
-    [...document.getElementsByClassName("cb-wrapper")].forEach(cb => {
-      cb.addEventListener("click", function() {
+    [...document.getElementsByClassName("cb-wrapper")].forEach((cb) => {
+      cb.addEventListener("click", function () {
         const checkedElement = document.getElementsByClassName("cb-checked")[0];
         checkedElement.getElementsByTagName("polyline")[0].style.stroke =
           "transparent";
@@ -140,8 +131,8 @@ class Channels extends Component {
           "#7289da";
       });
     });
-    [...document.getElementsByClassName("friendsbox")].forEach(box => {
-      box.addEventListener("click", function(event) {
+    [...document.getElementsByClassName("friendsbox")].forEach((box) => {
+      box.addEventListener("click", function (event) {
         if (event.target.className.includes("channel-settings")) return;
         document
           .getElementsByClassName("foactive")[0]
@@ -162,7 +153,7 @@ class Channels extends Component {
     this.props.setSelectedChannel(
       {
         serverID: servers[selectedServer]._id,
-        channelID: id
+        channelID: id,
       },
       selectedServer
     );
@@ -196,10 +187,10 @@ class Channels extends Component {
                     {
                       "friendsbox d-flex align-items-center foactive mt-1":
                         servers[selectedServer].selectedChannel ===
-                        servers[selectedServer].channels[i]._id
+                        servers[selectedServer].channels[i]._id,
                     }
                   )}
-                  onClick={event => {
+                  onClick={(event) => {
                     if (event.target.className.includes("channel-settings"))
                       return;
                     this.clickHandler.call(
@@ -224,19 +215,19 @@ class Channels extends Component {
                     className="d-flex justify-content-end"
                     style={{
                       flex: "1",
-                      height: "100%"
+                      height: "100%",
                     }}
                   >
                     <div
                       className="o-options d-flex justify-content-end align-items-center not-option mr-2 channel-settings"
                       style={{
-                        visibility: "hidden"
+                        visibility: "hidden",
                       }}
                       onClick={this.openChannelSettings.bind(this, {
                         serverID: servers[selectedServer]._id,
                         name: servers[selectedServer].channels[i].name,
                         id: servers[selectedServer].channels[i]._id,
-                        type: "text"
+                        type: "text",
                       })}
                     >
                       <img
@@ -265,10 +256,10 @@ class Channels extends Component {
                     {
                       "friendsbox d-flex align-items-center foactive mt-1":
                         servers[selectedServer].selectedChannel ===
-                        servers[selectedServer].channels[i]._id
+                        servers[selectedServer].channels[i]._id,
                     }
                   )}
-                  onClick={event => {
+                  onClick={(event) => {
                     if (event.target.className.includes("channel-settings"))
                       return;
                     this.clickHandler.call(
@@ -294,19 +285,19 @@ class Channels extends Component {
                     className="d-flex justify-content-end"
                     style={{
                       flex: "1",
-                      height: "100%"
+                      height: "100%",
                     }}
                   >
                     <div
                       className="o-options d-flex justify-content-end align-items-center not-option mr-2 channel-settings"
                       style={{
-                        visibility: "hidden"
+                        visibility: "hidden",
                       }}
                       onClick={this.openChannelSettings.bind(this, {
                         serverID: servers[selectedServer]._id,
                         name: servers[selectedServer].channels[i].name,
                         id: servers[selectedServer].channels[i]._id,
-                        type: "audio"
+                        type: "audio",
                       })}
                     >
                       <img
@@ -335,10 +326,10 @@ class Channels extends Component {
                     {
                       "friendsbox d-flex align-items-center foactive mt-1":
                         servers[selectedServer].selectedChannel ===
-                        servers[selectedServer].channels[i]._id
+                        servers[selectedServer].channels[i]._id,
                     }
                   )}
-                  onClick={event => {
+                  onClick={(event) => {
                     if (event.target.className.includes("channel-settings"))
                       return;
                     this.clickHandler.call(
@@ -364,19 +355,19 @@ class Channels extends Component {
                     className="d-flex justify-content-end"
                     style={{
                       flex: "1",
-                      height: "100%"
+                      height: "100%",
                     }}
                   >
                     <div
                       className="o-options d-flex justify-content-end align-items-center not-option mr-2 channel-settings"
                       style={{
-                        visibility: "hidden"
+                        visibility: "hidden",
                       }}
                       onClick={this.openChannelSettings.bind(this, {
                         serverID: servers[selectedServer]._id,
                         name: servers[selectedServer].channels[i].name,
                         id: servers[selectedServer].channels[i]._id,
-                        type: "video"
+                        type: "video",
                       })}
                     >
                       <img
@@ -408,7 +399,7 @@ class Channels extends Component {
               width: "100%",
               height: "90%",
               cursor: "pointer",
-              borderBottom: "1px solid #222427"
+              borderBottom: "1px solid #222427",
             }}
             onClick={() => {
               const caret = document.getElementById("caret");
@@ -435,7 +426,9 @@ class Channels extends Component {
             </div>
           </div>
         </div>
-        <ServerDropDown></ServerDropDown>
+        <ServerDropDown
+          removeFunctionReference={this.props.removeFunctionReference}
+        ></ServerDropDown>
         <div className="friends" style={{ height: "8vh", width: "100%" }}>
           <div
             className="d-flex align-items-start"
@@ -563,6 +556,7 @@ class Channels extends Component {
           </div>
         </div>
         {videoChannels}
+        <Invite servers={servers} selectedServer={selectedServer}></Invite>
         <div
           className="modal fade"
           id="createChannelModal"
@@ -707,7 +701,7 @@ class Channels extends Component {
                 </p>
                 <input
                   className={classnames("form-control finput", {
-                    "is-invalid": errors.channel
+                    "is-invalid": errors.channel,
                   })}
                   autoComplete="off"
                   type="text"
@@ -715,7 +709,7 @@ class Channels extends Component {
                   id="channelName"
                   aria-describedby="channelName"
                   value={this.state.channelName}
-                  onChange={event => {
+                  onChange={(event) => {
                     this.setState({ channelName: event.target.value });
                   }}
                 />
@@ -765,14 +759,12 @@ Channels.propTypes = {
   setSettingsView: PropTypes.func.isRequired,
   setSubView: PropTypes.func.isRequired,
   currentView: PropTypes.object.isRequired,
-  setModalOrDropdownOpen: PropTypes.func.isRequired,
-  setModalOrDropdownClose: PropTypes.func.isRequired
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   servers: state.servers,
   errors: state.errors,
-  currentView: state.currentView
+  currentView: state.currentView,
 });
 
 export default connect(mapStateToProps, {
@@ -781,6 +773,4 @@ export default connect(mapStateToProps, {
   getServers,
   setSettingsView,
   setSubView,
-  setModalOrDropdownOpen,
-  setModalOrDropdownClose
 })(Channels);

@@ -2,11 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-import {
-  setSettingsView,
-  setModalOrDropdownOpen,
-  setModalOrDropdownClose
-} from "../../../actions/viewAction";
+import { setSettingsView } from "../../../actions/viewAction";
 import { setStatus } from "../../../actions/userAction";
 
 class User extends Component {
@@ -26,7 +22,11 @@ class User extends Component {
     currentStatus.classList.remove(currentStatus.classList[1]);
     document.getElementById("statusTxt").innerText = status.id;
     currentStatus.classList.add(status.id);
-    this.props.setStatus(status.id);
+    this.props.emit(status.id, {
+      servers: this.props.serverIDs,
+      user: this.props.userID,
+    });
+    this.props.setStatus(status.id, this.props.userID);
   }
   componentDidMount() {
     if (this.props.user.userData) {
@@ -34,22 +34,22 @@ class User extends Component {
         .getElementById(this.props.user.userData.status)
         .classList.add("activestatus");
     }
-    [...document.getElementsByClassName("status-option")].forEach(status => {
+    [...document.getElementsByClassName("status-option")].forEach((status) => {
       status.addEventListener("click", this.changeStatus.bind(this, status));
     });
-    [...document.getElementsByClassName("options")].forEach(option => {
+    [...document.getElementsByClassName("options")].forEach((option) => {
       if (option.id === "settings") {
         option.addEventListener("click", this.showUserSettings);
       } else {
-        option.addEventListener("click", function() {
+        option.addEventListener("click", function () {
           let audio;
           if (this.children[0].src.includes("unmute")) {
-            let handler = stream => {
+            let handler = (stream) => {
               this.children[0].src = this.children[0].src.replace(
                 "unmute",
                 "mute"
               );
-              stream.getTracks().forEach(track => {
+              stream.getTracks().forEach((track) => {
                 track.stop();
               });
               console.log("Mic off");
@@ -59,7 +59,7 @@ class User extends Component {
             navigator.mediaDevices
               .getUserMedia({ audio: true })
               .then(handler)
-              .catch(err => {
+              .catch((err) => {
                 console.log(err);
               });
           } else if (this.children[0].src.includes("mute")) {
@@ -75,7 +75,7 @@ class User extends Component {
             navigator.mediaDevices
               .getUserMedia({ audio: true })
               .then(handler)
-              .catch(err => {
+              .catch((err) => {
                 console.log(err);
               });
           } else if (this.children[0].src.includes("headphones-on")) {
@@ -97,34 +97,28 @@ class User extends Component {
     });
   }
   showStatusOptions() {
-    const func = this.props.currentView.funcRefs
-      .modalOrDropdownFunctionReference;
-    if (func && func !== this.showStatusOptions) {
-      func();
-      this.props.setModalOrDropdownClose();
-    }
+    this.props.removeFunctionReference("modalFunc", this.showStatusOptions);
     const div = document.getElementsByClassName("change-status")[0];
     if (div.style.height === "44vh") {
-      this.props.setModalOrDropdownClose();
       div.style.zIndex = -10;
       window.TweenMax.to(div, 0.3, {
         height: "0",
-        ease: window.Power0.easeOut
+        ease: window.Power0.easeOut,
       });
       window.TweenMax.to(div, 0.1, {
         autoAlpha: 0,
-        ease: window.Power0.easeOut
+        ease: window.Power0.easeOut,
       });
     } else {
-      this.props.setModalOrDropdownOpen(this.showStatusOptions);
+      this.props.setFunctionReference("modalFunc", this.showStatusOptions);
       div.style.zIndex = 10;
       window.TweenMax.to(div, 0.1, {
         height: "44vh",
-        ease: window.Power0.easeIn
+        ease: window.Power0.easeIn,
       });
       window.TweenMax.to(div, 0.2, {
         autoAlpha: 1,
-        ease: window.Power0.easeIn
+        ease: window.Power0.easeIn,
       });
     }
   }
@@ -307,18 +301,14 @@ User.propTypes = {
   setSettingsView: PropTypes.func.isRequired,
   setStatus: PropTypes.func.isRequired,
   currentView: PropTypes.object.isRequired,
-  setModalOrDropdownOpen: PropTypes.func.isRequired,
-  setModalOrDropdownClose: PropTypes.func.isRequired
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   user: state.user,
-  currentView: state.currentView
+  currentView: state.currentView,
 });
 
 export default connect(mapStateToProps, {
   setSettingsView,
   setStatus,
-  setModalOrDropdownOpen,
-  setModalOrDropdownClose
 })(User);

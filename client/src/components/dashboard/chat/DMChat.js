@@ -12,7 +12,13 @@ class DMChat extends Component {
     const { view } = this.props.currentView;
     return (
       <div>
-        {view === "server" ? <ServerChatHeader /> : <DMChatHeader />}
+        {view === "server" ? (
+          <ServerChatHeader
+            removeFunctionReference={this.props.removeFunctionReference}
+          />
+        ) : (
+          <DMChatHeader />
+        )}
         <DMChatContent />
         <DMChatInput />
       </div>
@@ -21,11 +27,11 @@ class DMChat extends Component {
 }
 
 DMChat.propTypes = {
-  currentView: PropTypes.object.isRequired
+  currentView: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
-  currentView: state.currentView
+const mapStateToProps = (state) => ({
+  currentView: state.currentView,
 });
 
 export default connect(mapStateToProps)(DMChat);

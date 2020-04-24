@@ -1,4 +1,6 @@
 const express = require("express");
+const axios = require("axios");
+const keys = require("./config/keys");
 const socket = require("socket.io");
 const mongoose = require("mongoose");
 const passport = require("passport");
@@ -9,8 +11,6 @@ const channel = require("./routes/channel");
 const path = require("path");
 const app = express();
 const db = require("./config/keys").mongoURI;
-
-//const servers = []
 
 mongoose.set("useFindAndModify", false);
 
@@ -34,7 +34,7 @@ mongoose
   .then(() => {
     console.log("Connected to MongoDB");
   })
-  .catch(err => {
+  .catch((err) => {
     console.log(err);
   });
 
@@ -61,23 +61,94 @@ const socketServer = app.listen(port, () => {
 
 const io = socket(socketServer);
 
-io.on("connection", socket => {
-  console.log(`${socket.id} connected`);
-  socket.on("startChat", data => {
-    socket.join(data.conversationID);
-  });
+const users = {};
 
-  socket.on("sendMessage", data => {
-    io.sockets
-      .in(data.conversationID)
-      .emit("newMessage", { message: data.message });
-  });
-
-  socket.on("endChat", data => {
-    socket.leave(data.conversationID);
-  });
-
+io.on("connection", (socket) => {
   socket.on("disconnect", () => {
-    console.log(`${socket.id} disconnected`);
+    if (users[socket.id]) {
+      users[socket.id].servers.forEach((server) => {
+        socket.to(server).emit("userOffline", {
+          user: users[socket.id].userID,
+          server: server,
+        });
+      });
+      axios
+        .post("http://localhost:5000/user/private/offline", {
+          secretKey: keys.secretKey,
+          id: users[socket.id].userID,
+        })
+        .then(() => {
+          delete users[socket.id];
+        });
+    }
+  });
+  socket.on("joinServer", (data) => {
+    const { servers, user } = { ...data };
+    if (!users[socket.id])
+      users[socket.id] = { userID: user, servers: servers };
+    servers.forEach((server) => {
+      socket.join(server);
+      socket.to(server).emit("joinServer", {
+        user: user,
+        server: server,
+      });
+    });
+    socket.emit("joinSuccess");
+  });
+  socket.on("online", (data) => {
+    const { servers, user } = { ...data };
+    if (!users[socket.id])
+      users[socket.id] = { userID: user, servers: servers };
+    servers.forEach((server) => {
+      socket.join(server);
+      socket.to(server).emit("userOnline", {
+        user: user,
+        server: server,
+      });
+    });
+  });
+  socket.on("offline", (data, callback) => {
+    const { servers, user } = { ...data };
+    if (!users[socket.id])
+      users[socket.id] = { userID: user, servers: servers };
+    servers.forEach((server) => {
+      socket.join(server);
+      socket.to(server).emit("userOffline", {
+        user: user,
+        server: server,
+      });
+    });
+    if (callback) callback("sucesss");
+  });
+  socket.on("busy", (data) => {
+    const { servers, user } = { ...data };
+    if (!users[socket.id])
+      users[socket.id] = { userID: user, servers: servers };
+    servers.forEach((server) => {
+      socket.join(server);
+      socket.to(server).emit("userBusy", {
+        user: user,
+        server: server,
+      });
+    });
+  });
+  socket.on("dnd", (data) => {
+    const { servers, user } = { ...data };
+    if (!users[socket.id])
+      users[socket.id] = { userID: user, servers: servers };
+    servers.forEach((server) => {
+      socket.join(server);
+      socket.to(server).emit("userDnd", {
+        user: user,
+        server: server,
+      });
+    });
+  });
+  socket.on("message", (data) => {
+    const { serverID, userID, message } = { ...data };
+    socket.to(serverID).broadcast.emit("chatMessage", {
+      message: message,
+      user: userID,
+    });
   });
 });

@@ -2,8 +2,16 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-import { getServers } from "../../../actions/serverAction";
-import { getUserData } from "../../../actions/userAction";
+import {
+  getServers,
+  updateUsers,
+  addUser,
+} from "../../../actions/serverAction";
+import {
+  getUserData,
+  setStatus,
+  setStatusOnLoad,
+} from "../../../actions/userAction";
 
 import Home from "./Home";
 import Servers from "../server/Servers";
@@ -19,6 +27,38 @@ import Settings from "../settings/Settings";
 import Chat from "../chat/Chat";
 
 class Dashboard extends Component {
+  constructor() {
+    super();
+    this.state = {
+      modalFunc: null,
+    };
+    this.setFunctionReference = this.setFunctionReference.bind(this);
+    this.removeFunctionReference = this.removeFunctionReference.bind(this);
+    this.emit = this.emit.bind(this);
+    this.disconnect = this.disconnect.bind(this);
+  }
+  setFunctionReference(type, func) {
+    this.setState({
+      [type]: func,
+    });
+  }
+  disconnect() {
+    this.socket.disconnect();
+  }
+  removeFunctionReference(type, func = null) {
+    if (this.state[type]) {
+      if (func && this.state[type] === func) {
+        this.setState({
+          [type]: null,
+        });
+        return;
+      }
+      this.state[type]();
+      this.setState({
+        [type]: null,
+      });
+    }
+  }
   componentDidUpdate() {
     if (
       this.props.currentView.view === "default" ||
@@ -36,10 +76,10 @@ class Dashboard extends Component {
       home.addEventListener("mouseover", serverHoverInHandler);
       home.addEventListener("mouseout", serverHoverOutHandler);
     }
-    [...document.getElementsByClassName("server")].forEach(server => {
+    [...document.getElementsByClassName("server")].forEach((server) => {
       server.addEventListener("mouseover", serverHoverInHandler);
       server.addEventListener("mouseout", serverHoverOutHandler);
-      server.addEventListener("click", function() {
+      server.addEventListener("click", function () {
         let selected = document.getElementsByClassName(
           "notification-selected"
         )[0];
@@ -96,14 +136,42 @@ class Dashboard extends Component {
     }
   }
   componentDidMount() {
+    this.socket = window.io.connect("http://localhost:5000");
+    this.socket.on("userOnline", (data) => {
+      this.props.updateUsers(data.server, data.user, "online");
+      if (!this.props.user.statusIsSet) this.props.setStatusOnLoad();
+    });
+    this.socket.on("userOffline", (data) => {
+      this.props.updateUsers(data.server, data.user, "offline");
+      if (!this.props.user.statusIsSet) this.props.setStatusOnLoad();
+    });
+    this.socket.on("joinServer", (data) => {
+      this.props.addUser(data.server, data.user);
+    });
+    this.socket.on("joinSuccess", () => {
+      const state = { ...this.props.history.location.state };
+      delete state.newMember;
+      this.props.history.replace({
+        ...this.props.history.location,
+        state,
+      });
+    });
+    this.socket.on("userBusy", (data) => {
+      this.props.updateUsers(data.server, data.user, "busy");
+      if (!this.props.user.statusIsSet) this.props.setStatusOnLoad();
+    });
+    this.socket.on("userDnd", (data) => {
+      this.props.updateUsers(data.server, data.user, "dnd");
+      if (!this.props.user.statusIsSet) this.props.setStatusOnLoad();
+    });
     if (this.props.currentView !== "settings") {
       this.props.getServers();
       this.props.getUserData();
     }
-    [...document.getElementsByClassName("server")].forEach(server => {
+    [...document.getElementsByClassName("server")].forEach((server) => {
       server.addEventListener("mouseover", serverHoverInHandler);
       server.addEventListener("mouseout", serverHoverOutHandler);
-      server.addEventListener("click", function() {
+      server.addEventListener("click", function () {
         let selected = document.getElementsByClassName(
           "notification-selected"
         )[0];
@@ -159,22 +227,41 @@ class Dashboard extends Component {
       }
     }
   }
+  emit(event, data) {
+    if (this.socket) this.socket.emit(event, data);
+  }
   render() {
     const { view } = this.props.currentView;
     const { servers, serversLoading } = this.props.servers;
-    const { userDataLoading } = this.props.user;
-    const serverList = [];
-
+    const { userDataLoading, userData, statusIsSet } = this.props.user;
+    const serverList = [],
+      serverIDs = [];
     if (!serversLoading && servers) {
       for (let i = 0; i < servers.length; i++) {
+        serverIDs.push(servers[i]._id);
         serverList.push(
           <Servers
             id={(i + 1).toString()}
             name={servers[i].name}
             image={servers[i].image}
             key={i}
+            removeFunctionReference={this.removeFunctionReference}
           />
         );
+      }
+    }
+    if (!statusIsSet && !userDataLoading && !serversLoading) {
+      if (userData) {
+        if (this.props.location.state && this.props.location.state.newMember) {
+          this.emit("joinServer", {
+            servers: serverIDs,
+            user: this.props.auth.user.id,
+          });
+        }
+        this.emit(userData.status, {
+          servers: serverIDs,
+          user: this.props.auth.user.id,
+        });
       }
     }
     return (
@@ -182,13 +269,15 @@ class Dashboard extends Component {
         {serversLoading || userDataLoading ? (
           <ComponentLoading />
         ) : view === "settings" ? (
-          <Settings></Settings>
+          <Settings disconnect={this.disconnect}></Settings>
         ) : (
           <>
             <div className="servers-home-wrapper">
-              <Home />
+              <Home removeFunctionReference={this.removeFunctionReference} />
               {serversLoading ? null : serverList}
-              <CreateServer />
+              <CreateServer
+                removeFunctionReference={this.removeFunctionReference}
+              />
               <SearchServers />
             </div>
             {view === "search" ? (
@@ -204,14 +293,25 @@ class Dashboard extends Component {
                   className="dm-channels-wrapper"
                   style={{ position: "absolute", left: "5.5rem", top: "0" }}
                 >
-                  <DirectMessage />
-                  <User />
+                  <DirectMessage
+                    setFunctionReference={this.setFunctionReference}
+                    removeFunctionReference={this.removeFunctionReference}
+                  />
+                  <User
+                    setFunctionReference={this.setFunctionReference}
+                    removeFunctionReference={this.removeFunctionReference}
+                    emit={this.emit}
+                    serverIDs={serverIDs}
+                    userID={this.props.auth.user.id}
+                  />
                 </div>
                 <div className="chat-dm-friends-wrapper">
                   {view === "default" ? (
                     <FriendsStatus />
                   ) : view === "server" ? (
-                    <Chat />
+                    <Chat
+                      removeFunctionReference={this.removeFunctionReference}
+                    />
                   ) : (
                     <DMChat />
                   )}
@@ -230,13 +330,26 @@ Dashboard.propTypes = {
   servers: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired,
   getServers: PropTypes.func.isRequired,
-  getUserData: PropTypes.func.isRequired
+  getUserData: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  updateUsers: PropTypes.func.isRequired,
+  setStatus: PropTypes.func.isRequired,
+  setStatusOnLoad: PropTypes.func.isRequired,
+  addUser: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   currentView: state.currentView,
   user: state.user,
-  servers: state.servers
+  servers: state.servers,
+  auth: state.auth,
 });
 
-export default connect(mapStateToProps, { getServers, getUserData })(Dashboard);
+export default connect(mapStateToProps, {
+  getServers,
+  getUserData,
+  updateUsers,
+  setStatus,
+  setStatusOnLoad,
+  addUser,
+})(Dashboard);

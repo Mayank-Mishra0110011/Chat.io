@@ -7,7 +7,7 @@ class Chat extends Component {
         className="w-100 h-100 d-flex justify-content-center align-items-center"
         style={{ backgroundColor: "#302c2d" }}
       >
-        <img src="./assets/image/loading.gif" alt="loading" />
+        <img src="/assets/image/loading.gif" alt="loading" />
       </div>
     );
   }

@@ -13,7 +13,11 @@ class DirectMessage extends Component {
     return (
       <div className="dm scrollable">
         {view === "server" ? (
-          <Channels selectedServer={selected} />
+          <Channels
+            selectedServer={selected}
+            setFunctionReference={this.props.setFunctionReference}
+            removeFunctionReference={this.props.removeFunctionReference}
+          />
         ) : (
           <div>
             <Friends />
@@ -48,11 +52,11 @@ class DirectMessage extends Component {
 
 DirectMessage.propTypes = {
   currentView: PropTypes.object.isRequired,
-  setDMView: PropTypes.func.isRequired
+  setDMView: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
-  currentView: state.currentView
+const mapStateToProps = (state) => ({
+  currentView: state.currentView,
 });
 
 export default connect(mapStateToProps, { setDMView })(DirectMessage);

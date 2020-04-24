@@ -2,15 +2,13 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-import { setModalOrDropdownClose } from "../../../actions/viewAction";
-
 class ServerChatHeader extends Component {
   constructor() {
     super();
     this.modalOpen = this.modalOpen.bind(this);
     this.modalClose = this.modalClose.bind(this);
     this.clickListener = this.clickListener.bind(this);
-    document.addEventListener("keydown", event => {
+    document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") this.modalClose();
     });
   }
@@ -18,12 +16,7 @@ class ServerChatHeader extends Component {
     if (event.target.id === "aboutModal") this.modalClose();
   }
   modalOpen() {
-    const func = this.props.currentView.funcRefs
-      .modalOrDropdownFunctionReference;
-    if (func) {
-      func();
-      this.props.setModalOrDropdownClose();
-    }
+    this.props.removeFunctionReference("modalFunc");
     const modal = document.getElementById("aboutModal");
     modal.classList.add("show");
     modal.style.display = "block";
@@ -89,7 +82,7 @@ class ServerChatHeader extends Component {
           style={{
             width: "100%",
             height: "80%",
-            borderBottom: "1px solid #2a2c31"
+            borderBottom: "1px solid #2a2c31",
           }}
         >
           <div style={{ width: "60rem", height: "100%", position: "relative" }}>
@@ -106,7 +99,7 @@ class ServerChatHeader extends Component {
                   style={{
                     width: "1px",
                     height: "70%",
-                    backgroundColor: "#8e9297"
+                    backgroundColor: "#8e9297",
                   }}
                   className="ml-2"
                 />
@@ -118,14 +111,14 @@ class ServerChatHeader extends Component {
                 height: "100%",
                 position: "absolute",
                 top: "0",
-                left: "10rem"
+                left: "10rem",
               }}
               className="d-flex  align-items-center py-1 ml-2"
             >
               <div
                 className="w-100"
                 style={{
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
                 onClick={this.modalOpen}
               >
@@ -173,14 +166,11 @@ class ServerChatHeader extends Component {
 ServerChatHeader.propTypes = {
   currentView: PropTypes.object.isRequired,
   servers: PropTypes.object.isRequired,
-  setModalOrDropdownClose: PropTypes.func.isRequired
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   currentView: state.currentView,
-  servers: state.servers
+  servers: state.servers,
 });
 
-export default connect(mapStateToProps, { setModalOrDropdownClose })(
-  ServerChatHeader
-);
+export default connect(mapStateToProps)(ServerChatHeader);

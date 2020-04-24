@@ -1,32 +1,66 @@
 import {
   GET_SERVERS,
   SERVERS_LOADING,
-  SET_SELECTED_CHANNEL
+  SET_SELECTED_CHANNEL,
+  UPDATE_USERS,
+  SET_USER_STATUS,
+  ADD_USER,
 } from "../actions/types";
 
 const initialState = {
   servers: null,
-  serversLoading: false
+  serversLoading: false,
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
+  let newState, user, servers;
   switch (action.type) {
     case SERVERS_LOADING:
       return {
         ...state,
-        serversLoading: true
+        serversLoading: true,
       };
     case GET_SERVERS:
       return {
         ...state,
         servers: action.payload,
-        serversLoading: false
+        serversLoading: false,
       };
     case SET_SELECTED_CHANNEL:
-      const index = action.payload.selectedServer;
-      const channelID = action.payload.channelID;
-      const newState = { ...state };
+      let index = action.payload.selectedServer;
+      let channelID = action.payload.channelID;
+      newState = { ...state };
       newState.servers[index].selectedChannel = channelID;
+      return newState;
+    case ADD_USER:
+      newState = { ...state };
+      servers = newState.servers.filter(
+        (server) => server._id === action.payload.serverID
+      );
+      servers.forEach((server) => {
+        server.members.push(action.payload.userInfo);
+      });
+      return newState;
+    case UPDATE_USERS:
+      newState = { ...state };
+      servers = newState.servers.filter(
+        (server) => server._id === action.payload.serverID
+      );
+      servers.forEach((server) => {
+        user = server.members.filter(
+          (member) => member._id === action.payload.userID
+        );
+        if (user[0]) user[0].status = action.payload.userStatus;
+      });
+      return newState;
+    case SET_USER_STATUS:
+      newState = { ...state };
+      newState.servers.forEach((server) => {
+        user = server.members.filter(
+          (member) => member._id === action.payload.id
+        );
+        user[0].status = action.payload.status;
+      });
       return newState;
     default:
       return state;

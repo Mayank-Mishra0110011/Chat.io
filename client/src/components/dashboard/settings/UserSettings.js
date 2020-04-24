@@ -17,7 +17,7 @@ class UserSettings extends Component {
             className="d-flex align-items-center"
             style={{
               width: "15rem",
-              height: "2rem"
+              height: "2rem",
             }}
           >
             <p
@@ -26,7 +26,7 @@ class UserSettings extends Component {
                 fontWeight: "bold",
                 color: "#8e9297",
                 fontSize: "0.8em",
-                letterSpacing: "1px"
+                letterSpacing: "1px",
               }}
             >
               User Settings
@@ -38,7 +38,7 @@ class UserSettings extends Component {
             className="d-flex align-items-center justify-content-start"
             style={{
               width: "15rem",
-              height: "2.5rem"
+              height: "2.5rem",
             }}
           >
             <div className="d-flex align-items-center activeSetting setting">
@@ -51,7 +51,7 @@ class UserSettings extends Component {
             className="d-flex align-items-center justify-content-start"
             style={{
               width: "15rem",
-              height: "2.5rem"
+              height: "2.5rem",
             }}
           >
             <div className="d-flex align-items-center setting">
@@ -64,7 +64,7 @@ class UserSettings extends Component {
             className="d-flex align-items-center justify-content-start"
             style={{
               width: "15rem",
-              height: "2.5rem"
+              height: "2.5rem",
             }}
           >
             <div className="d-flex align-items-center setting">
@@ -78,7 +78,7 @@ class UserSettings extends Component {
             style={{
               width: "15rem",
               height: "1px",
-              backgroundColor: "hsla(0, 0%, 100%, 0.06)"
+              backgroundColor: "hsla(0, 0%, 100%, 0.06)",
             }}
           ></div>
         </div>
@@ -87,7 +87,7 @@ class UserSettings extends Component {
             className="d-flex align-items-center"
             style={{
               width: "15rem",
-              height: "2rem"
+              height: "2rem",
             }}
           >
             <p
@@ -96,7 +96,7 @@ class UserSettings extends Component {
                 fontWeight: "bold",
                 color: "#8e9297",
                 fontSize: "0.8em",
-                letterSpacing: "1px"
+                letterSpacing: "1px",
               }}
             >
               App Settings
@@ -108,7 +108,7 @@ class UserSettings extends Component {
             className="d-flex align-items-center justify-content-start"
             style={{
               width: "15rem",
-              height: "2.5rem"
+              height: "2.5rem",
             }}
           >
             <div className="d-flex align-items-center setting">
@@ -121,7 +121,7 @@ class UserSettings extends Component {
             className="d-flex align-items-center justify-content-start"
             style={{
               width: "15rem",
-              height: "2.5rem"
+              height: "2.5rem",
             }}
           >
             <div className="d-flex align-items-center setting">
@@ -134,7 +134,7 @@ class UserSettings extends Component {
             className="d-flex align-items-center justify-content-start"
             style={{
               width: "15rem",
-              height: "2.5rem"
+              height: "2.5rem",
             }}
           >
             <div className="d-flex align-items-center setting">
@@ -148,7 +148,7 @@ class UserSettings extends Component {
             style={{
               width: "15rem",
               height: "1px",
-              backgroundColor: "hsla(0, 0%, 100%, 0.06)"
+              backgroundColor: "hsla(0, 0%, 100%, 0.06)",
             }}
           ></div>
         </div>
@@ -157,7 +157,7 @@ class UserSettings extends Component {
             className="d-flex align-items-center justify-content-start"
             style={{
               width: "15rem",
-              height: "2.5rem"
+              height: "2.5rem",
             }}
           >
             <div
@@ -165,6 +165,7 @@ class UserSettings extends Component {
               onClick={() => {
                 document.removeEventListener("keydown", this.handleEsc);
                 this.props.unsetSettingsView();
+                this.props.disconnect();
                 this.props.logoutUser();
               }}
             >
@@ -179,7 +180,7 @@ class UserSettings extends Component {
 
 UserSettings.propTypes = {
   unsetSettingsView: PropTypes.func.isRequired,
-  logoutUser: PropTypes.func.isRequired
+  logoutUser: PropTypes.func.isRequired,
 };
 
 export default connect(null, { unsetSettingsView, logoutUser })(UserSettings);

@@ -11,7 +11,9 @@ class Chat extends Component {
           className="server-chat-wrapper"
           style={{ position: "absolute", top: "0", overflowX: "auto" }}
         >
-          <DMChat />
+          <DMChat
+            removeFunctionReference={this.props.removeFunctionReference}
+          />
         </div>
         <div
           className="server-member-wrapper scrollable"

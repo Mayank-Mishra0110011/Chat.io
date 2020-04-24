@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 import classnames from "classnames";
 
 import { createServer, getServers } from "../../../actions/serverAction";
-import { setModalOrDropdownClose } from "../../../actions/viewAction";
 
 class CreateServer extends Component {
   constructor() {
@@ -13,7 +12,7 @@ class CreateServer extends Component {
       view: "default",
       serverIcon: "",
       serverName: "",
-      invite: ""
+      invite: "",
     };
     this.modalOpen = this.modalOpen.bind(this);
     this.modalClose = this.modalClose.bind(this);
@@ -34,7 +33,7 @@ class CreateServer extends Component {
     if (event.target.id === "serverIcon") {
       const reader = new FileReader();
       reader.fileName = event.target.files[0];
-      reader.onload = function(e) {
+      reader.onload = function (e) {
         document.getElementById("serverIconPreview").src = e.target.result;
         document.getElementById("fileTitle").title = e.target.fileName.name;
         this.setState({ serverIcon: e.target.result });
@@ -56,12 +55,7 @@ class CreateServer extends Component {
     if (event.target.id === "createServerModal") this.modalClose();
   }
   modalOpen() {
-    const func = this.props.currentView.funcRefs
-      .modalOrDropdownFunctionReference;
-    if (func) {
-      func();
-      this.props.setModalOrDropdownClose();
-    }
+    this.props.removeFunctionReference("modalFunc");
     const modal = document.getElementById("createServerModal");
     modal.classList.add("show");
     modal.style.display = "block";
@@ -73,7 +67,7 @@ class CreateServer extends Component {
       view: "default",
       serverIcon: "",
       invite: "",
-      serverName: ""
+      serverName: "",
     });
     const modal = document.getElementById("createServerModal");
     if (modal) {
@@ -92,7 +86,7 @@ class CreateServer extends Component {
     this.props
       .createServer({
         serverName: this.state.serverName,
-        image: this.state.serverIcon
+        image: this.state.serverIcon,
       })
       .then(() => {
         this.props.getServers();
@@ -206,7 +200,7 @@ class CreateServer extends Component {
                         <div className="pb-3">
                           <img
                             className="img-fluid"
-                            src="https://freepngimg.com/download/social_media/63004-icons-media-myspace-computer-design-social-icon.png"
+                            src="./assets/image/social.png"
                             alt="community"
                             style={{ maxHeight: "5rem" }}
                           />
@@ -262,7 +256,7 @@ class CreateServer extends Component {
                             className={classnames(
                               "form-control finput text-dark",
                               {
-                                "is-invalid": errors.server
+                                "is-invalid": errors.server,
                               }
                             )}
                             autoComplete="off"
@@ -301,7 +295,7 @@ class CreateServer extends Component {
                             style={{
                               width: "0",
                               height: "0",
-                              visibility: "hidden"
+                              visibility: "hidden",
                             }}
                             onChange={this.onChange}
                           />
@@ -315,7 +309,7 @@ class CreateServer extends Component {
                               width: "8rem",
                               height: "8rem",
                               border: "5px solid #ebebeb",
-                              backgroundColor: "rgb(114, 137, 218)"
+                              backgroundColor: "rgb(114, 137, 218)",
                             }}
                             onClick={() =>
                               document.getElementById("serverIcon").click()
@@ -334,7 +328,7 @@ class CreateServer extends Component {
                               style={{
                                 fontWeight: "bold",
                                 cursor: "pointer",
-                                color: "#b9bbbe"
+                                color: "#b9bbbe",
                               }}
                               onClick={this.handleClick.bind(
                                 this,
@@ -436,17 +430,15 @@ CreateServer.propTypes = {
   createServer: PropTypes.func.isRequired,
   getServers: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
-  setModalOrDropdownClose: PropTypes.func.isRequired,
-  currentView: PropTypes.object.isRequired
+  currentView: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   errors: state.errors,
-  currentView: state.currentView
+  currentView: state.currentView,
 });
 
 export default connect(mapStateToProps, {
   createServer,
   getServers,
-  setModalOrDropdownClose
 })(CreateServer);

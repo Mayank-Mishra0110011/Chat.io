@@ -124,7 +124,8 @@
   background-color: #7289da !important;
 }
 
-#createChannelModal {
+#createChannelModal,
+#inviteModal {
   background-color: rgb(0, 0, 0, 0.85);
   z-index: 100;
 }
@@ -619,6 +620,16 @@
   border: 1px solid #000000 !important;
   color: white;
   background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.invite {
+  border: 1px solid #000000;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.invite:focus {
+  box-shadow: none !important;
 }
 
 .finput:focus {

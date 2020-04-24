@@ -1,6 +1,40 @@
 import React, { Component } from "react";
 
 class ServerDropdown extends Component {
+  constructor() {
+    super();
+    this.openInviteModal = this.openInviteModal.bind(this);
+    this.closeInviteModal = this.closeInviteModal.bind(this);
+    this.clickListener = this.clickListener.bind(this);
+    this.handleEsc = this.handleEsc.bind(this);
+    document.addEventListener("keydown", this.handleEsc);
+  }
+  openInviteModal() {
+    this.props.removeFunctionReference("modalFunc");
+    const modal = document.getElementById("inviteModal");
+    modal.classList.add("show");
+    modal.style.display = "block";
+    modal.style.opacity = "1";
+    document.addEventListener("click", this.clickListener);
+  }
+  clickListener(event) {
+    if (event.target.id === "inviteModal") this.closeInviteModal();
+  }
+  closeInviteModal() {
+    const modal = document.getElementById("inviteModal");
+    if (modal) {
+      modal.classList.remove("show");
+      modal.style.display = "none";
+      modal.style.opacity = "0";
+      document.removeEventListener("click", this.clickListener);
+    }
+  }
+  handleEsc(event) {
+    if (event.key === "Escape") this.closeInviteModal();
+  }
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.handleEsc);
+  }
   render() {
     return (
       <div className="server-setting-dropdown">
@@ -8,6 +42,7 @@ class ServerDropdown extends Component {
           <div
             className={"server-option d-flex mt-1"}
             style={{ borderRadius: "3px" }}
+            onClick={this.openInviteModal}
           >
             <div
               style={{ width: "100%", height: "100%" }}
@@ -22,7 +57,7 @@ class ServerDropdown extends Component {
                 className="d-flex justify-content-end align-items-center"
                 style={{
                   flex: "1",
-                  height: "100%"
+                  height: "100%",
                 }}
               >
                 <div className="o-options d-flex justify-content-end align-items-center not-option mr-2">
@@ -60,7 +95,7 @@ class ServerDropdown extends Component {
                 className="d-flex justify-content-end align-items-center"
                 style={{
                   flex: "1",
-                  height: "100%"
+                  height: "100%",
                 }}
               >
                 <div className="o-options d-flex justify-content-end align-items-center not-option mr-2">
@@ -93,7 +128,7 @@ class ServerDropdown extends Component {
                 className="d-flex justify-content-end align-items-center"
                 style={{
                   flex: "1",
-                  height: "100%"
+                  height: "100%",
                 }}
               >
                 <div className="o-options d-flex justify-content-end align-items-center not-option mr-2">
@@ -113,7 +148,7 @@ class ServerDropdown extends Component {
             style={{
               width: "90%",
               height: "1px",
-              backgroundColor: "hsla(0, 0%, 100%, 0.06)"
+              backgroundColor: "hsla(0, 0%, 100%, 0.06)",
             }}
           ></div>
         </div>
@@ -133,7 +168,7 @@ class ServerDropdown extends Component {
                 className="d-flex justify-content-end align-items-center"
                 style={{
                   flex: "1",
-                  height: "100%"
+                  height: "100%",
                 }}
               >
                 <div className="o-options d-flex justify-content-end align-items-center not-option mr-2">
@@ -172,7 +207,7 @@ class ServerDropdown extends Component {
                 className="d-flex justify-content-end align-items-center"
                 style={{
                   flex: "1",
-                  height: "100%"
+                  height: "100%",
                 }}
               >
                 <div className="o-options d-flex justify-content-end align-items-center not-option mr-2">
@@ -198,7 +233,7 @@ class ServerDropdown extends Component {
             style={{
               width: "90%",
               height: "1px",
-              backgroundColor: "hsla(0, 0%, 100%, 0.06)"
+              backgroundColor: "hsla(0, 0%, 100%, 0.06)",
             }}
           ></div>
         </div>
@@ -218,7 +253,7 @@ class ServerDropdown extends Component {
                 className="d-flex justify-content-end align-items-center"
                 style={{
                   flex: "1",
-                  height: "100%"
+                  height: "100%",
                 }}
               >
                 <div className="o-options d-flex justify-content-end align-items-center not-option mr-2">

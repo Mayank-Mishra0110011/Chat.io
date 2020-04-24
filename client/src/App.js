@@ -12,6 +12,7 @@ import Landing from "./components/layout/Landing";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import Dashboard from "./components/dashboard/user/Dashboard";
+import Invite from "./components/auth/Invite";
 
 if (localStorage.jwtToken) {
   setAuthToken(localStorage.jwtToken);
@@ -35,6 +36,7 @@ function App() {
           <Route exact path="/register" component={Register} />
           <Switch>
             <PrivateRoute exact path="/dashboard" component={Dashboard} />
+            <PrivateRoute path="/invite" component={Invite} />
           </Switch>
         </div>
       </Router>

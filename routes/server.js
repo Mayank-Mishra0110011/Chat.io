@@ -13,7 +13,7 @@ router.post(
   "/create",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    user.findById(req.user.id).then(foundUser => {
+    user.findById(req.user.id).then((foundUser) => {
       if (!req.body.serverName)
         return res.status(400).json({ server: "Server name is required" });
       if (req.body.serverName.trim() == "")
@@ -26,21 +26,21 @@ router.post(
       if (req.body.image) image = req.body.image;
       const channel1 = new Channel({
         type: "text",
-        name: "general"
+        name: "general",
       });
       const channel2 = new Channel({
         type: "audio",
-        name: "general"
+        name: "general",
       });
       const channel3 = new Channel({
         type: "video",
-        name: "general"
+        name: "general",
       });
       const newServer = new Server({
         name: req.body.serverName,
         image: image,
         creator: req.user.id,
-        selectedChannel: channel1
+        selectedChannel: channel1,
       });
       newServer.admins.push(req.user.id);
       newServer.members.push(req.user.id);
@@ -74,9 +74,16 @@ router.get(
       .findById(req.user.id)
       .populate({
         path: "servers",
-        populate: { path: "channels", select: ["type", "name", "about"] }
+        populate: { path: "channels", select: ["type", "name", "about"] },
       })
-      .then(foundUser => {
+      .populate({
+        path: "servers",
+        populate: {
+          path: "members",
+          select: ["username", "profilePicture", "status", "lastStatus"],
+        },
+      })
+      .then((foundUser) => {
         res.json(foundUser.servers);
       });
   }
@@ -89,7 +96,7 @@ router.get(
   "/channel",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    server.findById(req.body.serverID).then(foundServer => {
+    server.findById(req.body.serverID).then((foundServer) => {
       res.json(foundServer.selectedChannel);
     });
   }
@@ -102,10 +109,80 @@ router.post(
   "/channel",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    server.findById(req.body.serverID).then(foundServer => {
+    server.findById(req.body.serverID).then((foundServer) => {
       foundServer.selectedChannel = req.body.channelID;
       foundServer.save().then(() => {
         res.json({ suceess: true });
+      });
+    });
+  }
+);
+
+//@route POST server/invite/validate
+//@desc validate invite
+//@access Private
+router.post(
+  "/invite/validate",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    server
+      .findById(req.body.id)
+      .then(() => res.json({ valid: true }))
+      .catch(() => res.json({ valid: false }));
+  }
+);
+
+//@route POST server/info
+//@desc get some server information
+//@access Private
+router.post(
+  "/info",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    server
+      .findById(req.body.id)
+      .populate("members", ["status"])
+      .then((foundServer) => {
+        let online = 0;
+        foundServer.members.forEach((member) => {
+          if (member.status == "online") online++;
+        });
+        res.json({
+          serverName: foundServer.name,
+          serverImage: foundServer.image,
+          onlineMembers: online,
+          members: foundServer.members.length,
+        });
+      })
+      .catch(() => {
+        res.status(404).json({ serverNotFound: "Server Not Found" });
+      });
+  }
+);
+
+//@route POST server/join
+//@desc allows user to join a server
+//@access Private
+router.post(
+  "/join",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    server.findById(req.body.id).then((foundServer) => {
+      user.findById(req.user.id).then((foundUser) => {
+        if (
+          foundServer.members.filter((user) => user._id == req.user.id)
+            .length == 0
+        ) {
+          foundUser.servers.push(foundServer);
+          foundUser.save().then(() => {
+            foundServer.members.push(req.user.id);
+            foundServer.save().then(() => {
+              res.json({ success: true });
+            });
+          });
+        } else {
+          res.json({ success: false });
+        }
       });
     });
   }

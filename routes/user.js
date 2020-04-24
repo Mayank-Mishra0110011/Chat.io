@@ -17,12 +17,12 @@ router.post("/register", (req, res) => {
     return res.status(400).json(errors);
   }
   req.body.email = req.body.email.trim().toLowerCase();
-  user.findOne({ username: req.body.username }).then(foundUserByUsername => {
+  user.findOne({ username: req.body.username }).then((foundUserByUsername) => {
     if (foundUserByUsername) {
       errors.username = "Username already taken";
       return res.status(400).json(errors);
     } else {
-      user.findOne({ email: req.body.email }).then(foundUserByEmail => {
+      user.findOne({ email: req.body.email }).then((foundUserByEmail) => {
         if (foundUserByEmail) {
           errors.email = "Email already exists";
           return res.status(400).json(errors);
@@ -30,7 +30,7 @@ router.post("/register", (req, res) => {
           const newUser = new User({
             username: req.body.username,
             email: req.body.email,
-            password: req.body.password
+            password: req.body.password,
           });
           bcrypt.genSalt(10, (err, salt) => {
             bcrypt.hash(newUser.password, salt, (err, hash) => {
@@ -59,15 +59,15 @@ router.post("/login", (req, res) => {
   const email = req.body.email.trim().toLowerCase();
   user
     .findOne({ email })
-    .then(foundUser => {
+    .then((foundUser) => {
       if (!foundUser) {
         throw err;
       }
-      bcrypt.compare(password, foundUser.password).then(isEqual => {
+      bcrypt.compare(password, foundUser.password).then((isEqual) => {
         if (isEqual) {
           const payload = {
             id: foundUser.id,
-            username: foundUser.username
+            username: foundUser.username,
           };
           jwt.sign(
             payload,
@@ -76,7 +76,7 @@ router.post("/login", (req, res) => {
             (err, token) => {
               res.json({
                 success: true,
-                token: `Bearer ${token}`
+                token: `Bearer ${token}`,
               });
             }
           );
@@ -99,13 +99,16 @@ router.get(
   "/",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    user.findById(req.user.id).then(foundUser => {
-      res.json({
-        username: foundUser.username,
-        profilePicture: foundUser.profilePicture,
-        status: foundUser.status,
-        micEnabled: foundUser.micEnabled,
-        audioEnabled: foundUser.audioEnabled
+    user.findById(req.user.id).then((foundUser) => {
+      if (foundUser.lastStatus) foundUser.status = foundUser.lastStatus;
+      foundUser.save().then((foundUser) => {
+        res.json({
+          username: foundUser.username,
+          profilePicture: foundUser.profilePicture,
+          status: foundUser.status,
+          micEnabled: foundUser.micEnabled,
+          audioEnabled: foundUser.audioEnabled,
+        });
       });
     });
   }
@@ -118,7 +121,7 @@ router.post(
   "/set/status",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    user.findById(req.user.id).then(foundUser => {
+    user.findById(req.user.id).then((foundUser) => {
       foundUser.status = req.body.status;
       foundUser.save().then(() => {
         res.json({ success: true });
@@ -126,5 +129,37 @@ router.post(
     });
   }
 );
+
+//@route POST user/info
+//@desc get basic user information
+//@access Public
+router.post("/info", (req, res) => {
+  user
+    .findById(req.body.id, [
+      "username",
+      "profilePicture",
+      "status",
+      "lastStatus",
+    ])
+    .then((foundUser) => {
+      res.json({ info: foundUser });
+    });
+});
+
+//@route POST user/private/offline
+//@desc set user status offline
+//@access Super Private
+router.post("/private/offline", (req, res) => {
+  if (!req.body.secretKey || req.body.secretKey != keys.secretKey) {
+    return res.status(403).json({ error: "Unauthorized" });
+  }
+  user.findById(req.body.id).then((foundUser) => {
+    foundUser.lastStatus = foundUser.status;
+    foundUser.status = "offline";
+    foundUser.save().then(() => {
+      res.json({ success: true });
+    });
+  });
+});
 
 module.exports = router;

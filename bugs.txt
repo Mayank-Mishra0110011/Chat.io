@@ -1,2 +1,2 @@
 => After deleting a channel and opening settings of a different channel, esc event makes view null, redirects to home instead of server.
-
+=> If a currently selected channel is deleted, app will crash
