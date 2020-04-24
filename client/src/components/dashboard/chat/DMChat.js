@@ -20,7 +20,11 @@ class DMChat extends Component {
           <DMChatHeader />
         )}
         <DMChatContent />
-        <DMChatInput />
+        <DMChatInput
+          serverIDs={this.props.serverIDs}
+          userID={this.props.userID}
+          emit={this.props.emit}
+        />
       </div>
     );
   }

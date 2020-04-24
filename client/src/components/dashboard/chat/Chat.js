@@ -12,6 +12,9 @@ class Chat extends Component {
           style={{ position: "absolute", top: "0", overflowX: "auto" }}
         >
           <DMChat
+            serverIDs={this.props.serverIDs}
+            userID={this.props.userID}
+            emit={this.props.emit}
             removeFunctionReference={this.props.removeFunctionReference}
           />
         </div>

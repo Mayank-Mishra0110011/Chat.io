@@ -145,10 +145,17 @@ io.on("connection", (socket) => {
     });
   });
   socket.on("message", (data) => {
-    const { serverID, userID, message } = { ...data };
-    socket.to(serverID).broadcast.emit("chatMessage", {
-      message: message,
-      user: userID,
+    const { servers, userID, username, profilePicture, message } = { ...data };
+    if (!users[socket.id])
+      users[socket.id] = { userID: userID, servers: servers };
+    servers.forEach((server) => {
+      socket.join(server);
+      socket.to(server).emit("message", {
+        id: userID,
+        username: username,
+        profilePicture: profilePicture,
+        message: message,
+      });
     });
   });
 });

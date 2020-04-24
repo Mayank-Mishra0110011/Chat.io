@@ -272,6 +272,10 @@
   box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.75) !important;
 }
 
+.message:hover {
+  background-color: #32353b;
+}
+
 .message-input-form {
   width: 100%;
   height: 100%;
@@ -320,6 +324,7 @@
 
 .chat-message {
   margin-left: 5rem;
+  user-select: text;
 }
 
 .server img {

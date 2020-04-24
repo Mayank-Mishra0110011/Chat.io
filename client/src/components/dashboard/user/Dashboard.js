@@ -12,6 +12,7 @@ import {
   setStatus,
   setStatusOnLoad,
 } from "../../../actions/userAction";
+import { addMessage } from "../../../actions/channelAction";
 
 import Home from "./Home";
 import Servers from "../server/Servers";
@@ -137,6 +138,10 @@ class Dashboard extends Component {
   }
   componentDidMount() {
     this.socket = window.io.connect("http://localhost:5000");
+    this.socket.on("message", (data) => {
+      const { id, username, profilePicture, message } = data;
+      this.props.addMessage(id, username, profilePicture, message);
+    });
     this.socket.on("userOnline", (data) => {
       this.props.updateUsers(data.server, data.user, "online");
       if (!this.props.user.statusIsSet) this.props.setStatusOnLoad();
@@ -310,6 +315,9 @@ class Dashboard extends Component {
                     <FriendsStatus />
                   ) : view === "server" ? (
                     <Chat
+                      serverIDs={serverIDs}
+                      userID={this.props.auth.user.id}
+                      emit={this.emit}
                       removeFunctionReference={this.removeFunctionReference}
                     />
                   ) : (
@@ -336,6 +344,7 @@ Dashboard.propTypes = {
   setStatus: PropTypes.func.isRequired,
   setStatusOnLoad: PropTypes.func.isRequired,
   addUser: PropTypes.func.isRequired,
+  addMessage: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -352,4 +361,5 @@ export default connect(mapStateToProps, {
   setStatus,
   setStatusOnLoad,
   addUser,
+  addMessage,
 })(Dashboard);
