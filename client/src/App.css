@@ -125,7 +125,8 @@
 }
 
 #createChannelModal,
-#inviteModal {
+#inviteModal,
+#uploadImageModal {
   background-color: rgb(0, 0, 0, 0.85);
   z-index: 100;
 }
@@ -245,7 +246,8 @@
   border-top-right-radius: 2rem;
 }
 
-.server {
+.server,
+.sample {
   margin-left: 0.4rem;
   width: 4rem;
   border-radius: 5rem;
@@ -322,12 +324,31 @@
   left: 0;
 }
 
+.edit {
+  background-color: #7289da;
+}
+
+.cp-link {
+  text-decoration: none;
+  font-size: small;
+  cursor: pointer;
+}
+
+.cp-link:hover {
+  text-decoration: underline;
+}
+
+.edit:hover {
+  background-color: #677bc4;
+}
+
 .chat-message {
   margin-left: 5rem;
   user-select: text;
 }
 
-.server img {
+.server img,
+.sample img {
   min-height: 100%;
 }
 
@@ -426,10 +447,35 @@
 }
 
 .friendPic {
-  width: 70%;
+  width: 2.5rem;
   border-radius: 5rem;
-  height: 80%;
+  height: 2.5rem;
   overflow: hidden;
+}
+
+.embed-loading {
+  height: 6rem;
+}
+
+.embed {
+  width: 90%;
+  border-radius: 4px;
+  border-left: 5px solid rgba(32, 34, 37, 1);
+  background-color: #2f3136;
+}
+
+.typing {
+  width: 45.5rem;
+  margin-left: 5px;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  position: fixed;
+  top: 86vh;
+  left: 22.5rem;
+  height: 0px;
+  visibility: hidden;
+  overflow: hidden;
+  background-color: #292b2f;
 }
 
 .options,
@@ -610,6 +656,49 @@
 .server-card:hover {
   transform: scale(1.01);
   box-shadow: 0 1rem 1rem rgba(0, 0, 0, 0.5);
+}
+
+.avatar-set {
+  left: 30% !important;
+  visibility: visible;
+}
+
+.profile {
+  width: 8rem;
+  border-radius: 5rem;
+  height: 8rem;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+}
+
+.change-avatar {
+  position: absolute;
+  top: 45%;
+  left: 10%;
+  font-size: 14px;
+  font-weight: bolder;
+}
+
+.avatar-not-set {
+  visibility: hidden;
+}
+
+.form-control-file {
+  visibility: hidden;
+  width: 0;
+  height: 0;
+}
+
+.profile-set {
+  opacity: 0.5;
+}
+.profile:hover .avatar-not-set {
+  visibility: visible;
+}
+
+.profile:hover > img {
+  opacity: 0.5;
 }
 
 .login-bg {

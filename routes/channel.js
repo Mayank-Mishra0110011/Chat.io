@@ -4,6 +4,8 @@ const server = require("../models/Server");
 const channel = require("../models/Channel");
 const message = require("../models/Message");
 const passport = require("passport");
+const axios = require("axios");
+const cheerio = require("cheerio");
 const validator = require("validator");
 
 //@route POST channel/create
@@ -133,5 +135,25 @@ router.post(
     });
   }
 );
+
+router.post("/message/meta", (req, res) => {
+  axios.get(req.body.url).then((response) => {
+    const $ = cheerio.load(response.data);
+    const title = $("meta[property='og:title']");
+    const image = $("meta[property='og:image']");
+    const description = $("meta[property='og:description']");
+    const siteName = $("meta[property='og:site_name']");
+    const resposeObject = {};
+    if (title[0].attribs.content)
+      resposeObject.title = title[0].attribs.content;
+    if (image[0].attribs.content)
+      resposeObject.image = image[0].attribs.content;
+    if (description[0].attribs.content)
+      resposeObject.description = description[0].attribs.content;
+    if (siteName[0].attribs.content)
+      resposeObject.siteName = siteName[0].attribs.content;
+    res.json(resposeObject);
+  });
+});
 
 module.exports = router;

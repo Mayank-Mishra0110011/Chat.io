@@ -144,6 +144,40 @@ io.on("connection", (socket) => {
       });
     });
   });
+  socket.on("profileUpdate", (data) => {
+    const { servers, userID, profilePicture } = { ...data };
+    if (!users[socket.id])
+      users[socket.id] = { userID: userID, servers: servers };
+    servers.forEach((server) => {
+      socket.join(server);
+      socket.to(server).emit("profileUpdate", {
+        id: userID,
+        profilePicture: profilePicture,
+      });
+    });
+  });
+  socket.on("typing", (data) => {
+    const { servers, username, userID } = { ...data };
+    if (!users[socket.id])
+      users[socket.id] = { userID: userID, servers: servers };
+    servers.forEach((server) => {
+      socket.join(server);
+      socket.to(server).emit("typing", {
+        username: username,
+      });
+    });
+  });
+  socket.on("notTyping", (data) => {
+    const { servers, username, userID } = { ...data };
+    if (!users[socket.id])
+      users[socket.id] = { userID: userID, servers: servers };
+    servers.forEach((server) => {
+      socket.join(server);
+      socket.to(server).emit("notTyping", {
+        username: username,
+      });
+    });
+  });
   socket.on("message", (data) => {
     const { servers, userID, username, profilePicture, message } = { ...data };
     if (!users[socket.id])

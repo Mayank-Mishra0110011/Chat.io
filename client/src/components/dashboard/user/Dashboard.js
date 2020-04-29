@@ -11,6 +11,7 @@ import {
   getUserData,
   setStatus,
   setStatusOnLoad,
+  setProfilePicture,
 } from "../../../actions/userAction";
 import { addMessage } from "../../../actions/channelAction";
 
@@ -138,6 +139,10 @@ class Dashboard extends Component {
   }
   componentDidMount() {
     this.socket = window.io.connect("http://localhost:5000");
+    this.socket.on("profileUpdate", (data) => {
+      const { id, profilePicture } = data;
+      this.props.setProfilePicture(id, profilePicture, true);
+    });
     this.socket.on("message", (data) => {
       const { id, username, profilePicture, message } = data;
       this.props.addMessage(id, username, profilePicture, message);
@@ -274,7 +279,11 @@ class Dashboard extends Component {
         {serversLoading || userDataLoading ? (
           <ComponentLoading />
         ) : view === "settings" ? (
-          <Settings disconnect={this.disconnect}></Settings>
+          <Settings
+            disconnect={this.disconnect}
+            emit={this.emit}
+            serverIDs={serverIDs}
+          ></Settings>
         ) : (
           <>
             <div className="servers-home-wrapper">
@@ -317,7 +326,7 @@ class Dashboard extends Component {
                     <Chat
                       serverIDs={serverIDs}
                       userID={this.props.auth.user.id}
-                      emit={this.emit}
+                      socket={this.socket}
                       removeFunctionReference={this.removeFunctionReference}
                     />
                   ) : (
@@ -345,6 +354,7 @@ Dashboard.propTypes = {
   setStatusOnLoad: PropTypes.func.isRequired,
   addUser: PropTypes.func.isRequired,
   addMessage: PropTypes.func.isRequired,
+  setProfilePicture: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -362,4 +372,5 @@ export default connect(mapStateToProps, {
   setStatusOnLoad,
   addUser,
   addMessage,
+  setProfilePicture,
 })(Dashboard);

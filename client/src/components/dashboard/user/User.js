@@ -126,7 +126,7 @@ class User extends Component {
     const { userData } = this.props.user;
     return (
       <div id="user">
-        <div className="userbox d-flex justify-content-center align-items-center">
+        <div className="userbox d-flex justify-content-center align-items-center w-100">
           <div
             style={{ width: "20%", height: "100%" }}
             className="d-flex justify-content-center align-items-center"

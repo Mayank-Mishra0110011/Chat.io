@@ -7,6 +7,8 @@ import { unsetSettingsView, setSubView } from "../../../actions/viewAction";
 import UserSettings from "./UserSettings";
 import ChannelSettings from "./ChannelSettings";
 
+import ProfileSettings from "./ProfileSettings";
+
 class Settings extends Component {
   constructor() {
     super();
@@ -78,6 +80,10 @@ class Settings extends Component {
         >
           {/* inner container */}
           {/* Yeet any added setting component in here */}
+          <ProfileSettings
+            emit={this.props.emit}
+            serverIDs={this.props.serverIDs}
+          />
         </div>
       </>
     );

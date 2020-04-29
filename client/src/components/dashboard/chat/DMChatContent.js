@@ -2,21 +2,36 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
+import classnames from "classnames";
+
 import moment from "moment";
 
 import { getMessages } from "../../../actions/channelAction";
 
 import ComponentLoading from "../../layout/ComponentLoading";
+import UrlEmbed from "./UrlEmbed";
+import ImageEmbed from "./ImageEmbed";
 
 class DMChatContent extends Component {
+  constructor() {
+    super();
+    this.scroll = this.scroll.bind(this);
+  }
   componentDidMount() {
     const selectedServer = parseInt(this.props.currentView.selected) - 1;
     const { servers } = this.props.servers;
     this.props.getMessages(servers[selectedServer].selectedChannel);
   }
-  componentDidUpdate() {
+  isValidURL(url) {
+    let pattern = /(ftp|http|https):(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(|([\w#!:.?+=&%@!-]))?/;
+    return pattern.test(url);
+  }
+  scroll() {
     if (this.refs.lastMessage)
       this.refs.lastMessage.scrollIntoView({ behavior: "smooth" });
+  }
+  componentDidUpdate() {
+    this.scroll();
   }
   render() {
     const { view } = this.props.currentView;
@@ -30,8 +45,23 @@ class DMChatContent extends Component {
         if (i === messages.length - 1) {
           props.ref = "lastMessage";
         }
+        let validURL, isImage;
+        if (this.isValidURL(messages[i].content)) {
+          validURL = true;
+        }
+        if (messages[i].content.substr(0, 5) === "data:") isImage = true;
         messageArr.push(
-          <div className="col-12 pt-3 message" {...props}>
+          <div
+            className={classnames("col-12 pt-3 message", {
+              "pb-3": i === messages.length - 1,
+            })}
+            {...props}
+            data-toggle="tooltip"
+            data-placement="top"
+            title={moment(messages[i].createdAt).format(
+              "dddd, MMMM, YYYY h:mm A"
+            )}
+          >
             <div
               className="d-flex flex-column"
               style={{ position: "relative", minHeight: "5rem" }}
@@ -64,18 +94,34 @@ class DMChatContent extends Component {
                     }}
                     className="ml-1"
                   >
-                    {moment(messages[i].createdAt).fromNow()}
+                    {moment().diff(messages[i].createdAt) > 172800000
+                      ? moment().format("MM/DD/YYYY")
+                      : moment(messages[i].createdAt).calendar()}
                   </span>
                 </p>
               </div>
               <div className="chat-message">
-                <p className="text-light mb-0">{messages[i].content}</p>
+                {validURL ? (
+                  <>
+                    <a href={messages[i].content}>{messages[i].content}</a>
+                    <UrlEmbed
+                      url={messages[i].content}
+                      scroll={this.scroll}
+                    ></UrlEmbed>
+                  </>
+                ) : isImage ? (
+                  <ImageEmbed data={messages[i].content} />
+                ) : (
+                  <p className="text-light mb-0">{messages[i].content}</p>
+                )}
               </div>
             </div>
             {i < messages.length - 1 &&
-            Date.now() - Date.parse(messages[i].createdAt > 86400000) ? (
+            moment(messages[i + 1].createdAt).diff(
+              moment(messages[i].createdAt)
+            ) > 86400000 ? (
               <span className="divider">
-                {moment(messages[i].createdAt).fromNow()}
+                {moment(messages[i + 1].createdAt).format("MMMM D, YYYY")}
               </span>
             ) : null}
           </div>
@@ -91,7 +137,7 @@ class DMChatContent extends Component {
         {messagesLoading ? (
           <ComponentLoading />
         ) : (
-          <div className="container pt-4 ml-0">
+          <div className="container pt-4 ml-0" style={{ position: "relative" }}>
             <div className="row">
               <div className="col-12">
                 {view === "server" ? (

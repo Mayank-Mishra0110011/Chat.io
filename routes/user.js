@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const keys = require("../config/keys");
 const validateRegisterInput = require("../validation/register");
 const validateLoginInput = require("../validation/login");
+const validateProfileUpdateInput = require("../validation/profile");
 const passport = require("passport");
 
 //@route POST user/register
@@ -108,6 +109,7 @@ router.get(
           status: foundUser.status,
           micEnabled: foundUser.micEnabled,
           audioEnabled: foundUser.audioEnabled,
+          email: foundUser.email,
         });
       });
     });
@@ -161,5 +163,57 @@ router.post("/private/offline", (req, res) => {
     });
   });
 });
+
+//@route POST user/profile/update
+//@desc updates user profile
+//@access private
+router.post(
+  "/profile/update",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateProfileUpdateInput(req.body);
+    if (!isValid) {
+      return res.status(400).json(errors);
+    }
+    req.body.email = req.body.email.trim().toLowerCase();
+    const updateFields = {};
+    if (!req.body.email.length == 0) {
+      updateFields.email = req.body.email;
+    }
+    if (!req.body.username.length == 0) {
+      updateFields.username = req.body.username;
+    }
+    if (!req.body.profilePicture.length == 0) {
+      updateFields.profilePicture = req.body.profilePicture;
+    }
+    user
+      .findOne({ username: updateFields.username })
+      .then((foundUserByUsername) => {
+        if (foundUserByUsername) {
+          errors.username = "Username already taken";
+          return res.status(400).json(errors);
+        } else {
+          user
+            .findOne({ email: updateFields.email })
+            .then((foundUserByEmail) => {
+              if (foundUserByEmail) {
+                errors.email = "Email already exists";
+                return res.status(400).json(errors);
+              } else {
+                user
+                  .findOneAndUpdate(
+                    { _id: req.user.id },
+                    { $set: updateFields },
+                    { new: true }
+                  )
+                  .then(() => {
+                    res.json({ success: true });
+                  });
+              }
+            });
+        }
+      });
+  }
+);
 
 module.exports = router;

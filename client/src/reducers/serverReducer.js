@@ -5,6 +5,7 @@ import {
   UPDATE_USERS,
   SET_USER_STATUS,
   ADD_USER,
+  SET_USER_PROFILE_PICTURE,
 } from "../actions/types";
 
 const initialState = {
@@ -51,6 +52,15 @@ export default function (state = initialState, action) {
           (member) => member._id === action.payload.userID
         );
         if (user[0]) user[0].status = action.payload.userStatus;
+      });
+      return newState;
+    case SET_USER_PROFILE_PICTURE:
+      newState = { ...state };
+      newState.servers.forEach((server) => {
+        user = server.members.filter(
+          (member) => member._id === action.payload.id
+        );
+        user[0].profilePicture = action.payload.img;
       });
       return newState;
     case SET_USER_STATUS:

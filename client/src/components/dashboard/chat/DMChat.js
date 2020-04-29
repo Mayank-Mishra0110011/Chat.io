@@ -21,9 +21,9 @@ class DMChat extends Component {
         )}
         <DMChatContent />
         <DMChatInput
+          socket={this.props.socket}
           serverIDs={this.props.serverIDs}
           userID={this.props.userID}
-          emit={this.props.emit}
         />
       </div>
     );
