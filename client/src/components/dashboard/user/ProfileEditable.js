@@ -96,7 +96,7 @@ class ProfileEditable extends Component {
       });
   }
   render() {
-    // might need this later
+    // will need this later
     // const { errors } = this.props.errors;
     // console.log(this.props.errors);
     return (

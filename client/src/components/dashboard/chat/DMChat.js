@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
 import DMChatHeader from "./DMChatHeader";
-import DMChatContent from "./DMChatContent";
-import DMChatInput from "./DMChatInput";
+import ServerChatContent from "./ServerChatContent";
+import ServerChatInput from "./ServerChatInput";
 import ServerChatHeader from "./ServerChatHeader";
 
 class DMChat extends Component {
@@ -13,18 +13,20 @@ class DMChat extends Component {
     return (
       <div>
         {view === "server" ? (
-          <ServerChatHeader
-            removeFunctionReference={this.props.removeFunctionReference}
-          />
+          <>
+            <ServerChatHeader
+              removeFunctionReference={this.props.removeFunctionReference}
+            />
+            <ServerChatContent />
+            <ServerChatInput
+              socket={this.props.socket}
+              serverIDs={this.props.serverIDs}
+              userID={this.props.userID}
+            />
+          </>
         ) : (
           <DMChatHeader />
         )}
-        <DMChatContent />
-        <DMChatInput
-          socket={this.props.socket}
-          serverIDs={this.props.serverIDs}
-          userID={this.props.userID}
-        />
       </div>
     );
   }

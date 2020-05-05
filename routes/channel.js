@@ -144,6 +144,10 @@ router.post("/message/meta", (req, res) => {
     const description = $("meta[property='og:description']");
     const siteName = $("meta[property='og:site_name']");
     const resposeObject = {};
+    if (!title[0]) {
+      resposeObject.title = req.body.url;
+      return res.json(resposeObject);
+    }
     if (title[0].attribs.content)
       resposeObject.title = title[0].attribs.content;
     if (image[0].attribs.content)

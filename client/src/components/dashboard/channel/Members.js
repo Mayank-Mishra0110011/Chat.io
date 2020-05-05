@@ -3,6 +3,30 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
 class Members extends Component {
+  constructor() {
+    super();
+    this.hideContextMenu = this.hideContextMenu.bind(this);
+  }
+  hideContextMenu(event) {
+    const menu = document.querySelector(".member-options");
+    if (menu && !menu.contains(event.target)) {
+      menu.style.zIndex = -100;
+      menu.style.visibility = "hidden";
+      document.removeEventListener("click", this.hideContextMenu);
+    }
+  }
+  componentWillUnmount() {
+    document.removeEventListener("click", this.hideContextMenu);
+  }
+  showContextMenu(event, type, userData) {
+    event.preventDefault();
+    this.props.setMenuOptions(type, userData);
+    const menu = document.querySelector(".member-options");
+    menu.style.top = `${event.pageY}px`;
+    menu.style.zIndex = 100;
+    menu.style.visibility = "visible";
+    document.addEventListener("click", this.hideContextMenu);
+  }
   render() {
     const { selected } = this.props.currentView;
     const { servers } = this.props.servers;
@@ -23,7 +47,36 @@ class Members extends Component {
         ref = offline;
       }
       ref.push(
-        <div className="d-flex mt-1" key={i}>
+        <div
+          className="d-flex mt-1"
+          key={i}
+          onContextMenu={(event) => {
+            let type;
+            if (
+              this.props.auth.user.id === servers[selected - 1].members[i]._id
+            ) {
+              type = "self";
+            } else {
+              type = "other";
+            }
+            if (
+              servers[selected - 1].creator !==
+              servers[selected - 1].members[i]._id
+            ) {
+              type += "Member";
+            } else if (
+              servers[selected - 1].creator ===
+              servers[selected - 1].members[i]._id
+            ) {
+              type = "Owner";
+            }
+            this.showContextMenu.call(this, event, type, {
+              profilePicture: servers[selected - 1].members[i].profilePicture,
+              username: servers[selected - 1].members[i].username,
+              status: servers[selected - 1].members[i].status,
+            });
+          }}
+        >
           <div
             className="d-flex align-items-center justify-content-start"
             style={{
@@ -57,7 +110,11 @@ class Members extends Component {
     return (
       <div
         className="ml-2"
-        style={{ width: "20rem", backgroundColor: "#2f3136" }}
+        style={{
+          width: "20rem",
+          backgroundColor: "#2f3136",
+          position: "relative",
+        }}
       >
         {online.length !== 0 ? (
           <>
@@ -171,11 +228,13 @@ class Members extends Component {
 Members.propTypes = {
   servers: PropTypes.object.isRequired,
   currentView: PropTypes.object.isRequired,
+  auth: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   servers: state.servers,
   currentView: state.currentView,
+  auth: state.auth,
 });
 
 export default connect(mapStateToProps)(Members);

@@ -7,7 +7,7 @@ import ServerDropDown from "../server/ServerDropdown";
 import Invite from "../server/Invite";
 
 import { setSelectedChannel, getServers } from "../../../actions/serverAction";
-import { createChannel } from "../../../actions/channelAction";
+import { createChannel, getMessages } from "../../../actions/channelAction";
 import { setSettingsView, setSubView } from "../../../actions/viewAction";
 
 class Channels extends Component {
@@ -157,6 +157,7 @@ class Channels extends Component {
       },
       selectedServer
     );
+    this.props.getMessages(id);
   }
   render() {
     const selectedServer = parseInt(this.props.selectedServer) - 1;
@@ -759,6 +760,7 @@ Channels.propTypes = {
   setSettingsView: PropTypes.func.isRequired,
   setSubView: PropTypes.func.isRequired,
   currentView: PropTypes.object.isRequired,
+  getMessages: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -773,4 +775,5 @@ export default connect(mapStateToProps, {
   getServers,
   setSettingsView,
   setSubView,
+  getMessages,
 })(Channels);

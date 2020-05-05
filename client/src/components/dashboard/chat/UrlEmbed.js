@@ -48,22 +48,30 @@ class UrlEmbed extends Component {
               className="d-flex flex-column px-2 py-2"
               style={{ width: "70%" }}
             >
-              <p className="text-muted">{this.state.siteName}</p>
-              <a href={this.props.url}>{this.state.title}</a>
-              <p className="text-muted pt-2">
-                {this.state.description.length > 138
-                  ? this.state.description.slice(0, 138) + "..."
-                  : this.state.description}
-              </p>
+              {this.state.siteName ? (
+                <p className="text-muted">{this.state.siteName}</p>
+              ) : null}
+              {this.state.title ? (
+                <a href={this.props.url}>{this.state.title}</a>
+              ) : null}
+              {this.state.description ? (
+                <p className="text-muted pt-2">
+                  {this.state.description.length > 138
+                    ? this.state.description.slice(0, 138) + "..."
+                    : this.state.description}
+                </p>
+              ) : null}
             </div>
-            <div className="py-2" style={{ width: "30%" }}>
-              <img
-                className="img-fluid"
-                style={{ borderRadius: "3px" }}
-                src={this.state.image}
-                alt="previewImage"
-              ></img>
-            </div>
+            {this.state.image ? (
+              <div className="py-2" style={{ width: "30%" }}>
+                <img
+                  className="img-fluid"
+                  style={{ borderRadius: "3px" }}
+                  src={this.state.image}
+                  alt="previewImage"
+                ></img>
+              </div>
+            ) : null}
           </>
         ) : (
           <ComponentLoading />
