@@ -12,7 +12,7 @@ import ComponentLoading from "../../layout/ComponentLoading";
 import UrlEmbed from "./UrlEmbed";
 import ImageEmbed from "./ImageEmbed";
 
-class DMChatContent extends Component {
+class ChatContent extends Component {
   constructor() {
     super();
     this.scroll = this.scroll.bind(this);
@@ -183,7 +183,7 @@ class DMChatContent extends Component {
   }
 }
 
-DMChatContent.propTypes = {
+ChatContent.propTypes = {
   currentView: PropTypes.object.isRequired,
   servers: PropTypes.object.isRequired,
   channel: PropTypes.object.isRequired,
@@ -196,4 +196,4 @@ const mapStateToProps = (state) => ({
   channel: state.channel,
 });
 
-export default connect(mapStateToProps, { getMessages })(DMChatContent);
+export default connect(mapStateToProps, { getMessages })(ChatContent);

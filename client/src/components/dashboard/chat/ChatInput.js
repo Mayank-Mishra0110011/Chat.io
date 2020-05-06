@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 
 import { addMessage, sendMessage } from "../../../actions/channelAction";
 
-class DMChatInput extends Component {
+class ChatInput extends Component {
   constructor() {
     super();
     this.state = {
@@ -295,11 +295,13 @@ class DMChatInput extends Component {
   }
 }
 
-DMChatInput.propTypes = {
+ChatInput.propTypes = {
   currentView: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired,
   sendMessage: PropTypes.func.isRequired,
   addMessage: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  servers: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -309,6 +311,4 @@ const mapStateToProps = (state) => ({
   servers: state.servers,
 });
 
-export default connect(mapStateToProps, { addMessage, sendMessage })(
-  DMChatInput
-);
+export default connect(mapStateToProps, { addMessage, sendMessage })(ChatInput);
