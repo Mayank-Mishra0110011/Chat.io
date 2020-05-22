@@ -53,7 +53,24 @@ router.post(
             newServer.save().then(() => {
               foundUser.servers.unshift(newServer);
               foundUser.save().then(() => {
-                res.json({ suceess: true });
+                server
+                  .findById(newServer._id)
+                  .populate({
+                    path: "members",
+                    select: [
+                      "username",
+                      "profilePicture",
+                      "status",
+                      "lastStatus",
+                    ],
+                  })
+                  .populate({
+                    path: "channels",
+                    select: ["type", "name", "about"],
+                  })
+                  .then((foundServer) => {
+                    res.json({ server: foundServer });
+                  });
               });
             });
           });
@@ -157,6 +174,22 @@ router.post(
       .catch(() => {
         res.status(404).json({ serverNotFound: "Server Not Found" });
       });
+  }
+);
+
+//@route POST server/
+//@desc delete server
+//@access Private
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    user.findById(req.user.id).then((user) => {
+      user.servers.splice(user.servers.indexOf(req.body.serverID), 1);
+      user.save().then(() => {
+        res.json({ success: true });
+      });
+    });
   }
 );
 

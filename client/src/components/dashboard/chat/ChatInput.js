@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import axios from "axios";
 
 import { addMessage, sendMessage } from "../../../actions/channelAction";
 
@@ -53,17 +54,37 @@ class ChatInput extends Component {
     const selectedServer = parseInt(this.props.currentView.selected) - 1;
     const { servers } = this.props.servers;
     this.props.addMessage(id, username, profilePicture, this.state.image);
-    this.props.socket.emit("message", {
-      servers: this.props.serverIDs,
-      userID: this.props.userID,
-      username: username,
-      profilePicture: profilePicture,
-      message: this.state.image,
-    });
-    this.props.sendMessage(
-      servers[selectedServer].selectedChannel,
-      this.state.image
-    );
+    let isDm = true;
+    const { view, subViewData } = this.props.currentView;
+    if (view !== "server") {
+      const dm = this.props.user.directMessages[subViewData.selectedDM];
+      axios.post("http://localhost:5000/user/message/send", {
+        conversationID: dm.conversation,
+        message: this.state.image,
+        receiver: dm.user._id,
+      });
+      this.props.socket.emit("message", {
+        servers: this.props.serverIDs,
+        userID: this.props.userID,
+        username: username,
+        profilePicture: profilePicture,
+        message: this.state.image,
+        isDm: isDm,
+        receiver: dm.user._id,
+      });
+    } else {
+      this.props.sendMessage(
+        servers[selectedServer].selectedChannel,
+        this.state.image
+      );
+      this.props.socket.emit("message", {
+        servers: this.props.serverIDs,
+        userID: this.props.userID,
+        username: username,
+        profilePicture: profilePicture,
+        message: this.state.image,
+      });
+    }
     this.modalClose();
   }
   modalClose() {
@@ -81,44 +102,92 @@ class ChatInput extends Component {
     this.stoppedTyping();
     if (this.state.message.trim().length > 0) {
       const { username, profilePicture } = this.props.user;
+      let isDm = true;
+      const { view, subViewData } = this.props.currentView;
       const { id } = this.props.auth.user;
       const selectedServer = parseInt(this.props.currentView.selected) - 1;
       const { servers } = this.props.servers;
+      if (view !== "server") {
+        const dm = this.props.user.directMessages[subViewData.selectedDM];
+        axios.post("http://localhost:5000/user/message/send", {
+          conversationID: dm.conversation,
+          message: this.state.message,
+          receiver: dm.user._id,
+        });
+        this.props.socket.emit("message", {
+          servers: this.props.serverIDs,
+          userID: this.props.userID,
+          username: username,
+          profilePicture: profilePicture,
+          message: this.state.message,
+          isDm: isDm,
+          receiver: dm.user._id,
+        });
+      } else {
+        this.props.sendMessage(
+          servers[selectedServer].selectedChannel,
+          this.state.message
+        );
+        this.props.socket.emit("message", {
+          servers: this.props.serverIDs,
+          userID: this.props.userID,
+          username: username,
+          profilePicture: profilePicture,
+          message: this.state.message,
+        });
+      }
       this.props.addMessage(id, username, profilePicture, this.state.message);
-      this.props.socket.emit("message", {
-        servers: this.props.serverIDs,
-        userID: this.props.userID,
-        username: username,
-        profilePicture: profilePicture,
-        message: this.state.message,
-      });
-      this.props.sendMessage(
-        servers[selectedServer].selectedChannel,
-        this.state.message
-      );
       this.setState({ message: "" });
     }
   }
   onChange(event) {
     const { username } = this.props.user;
-    this.props.socket.emit("typing", {
-      servers: this.props.serverIDs,
-      userID: this.props.userID,
-      username: username,
-    });
+    const { view, subViewData } = this.props.currentView;
+    if (view === "server") {
+      this.props.socket.emit("typing", {
+        servers: this.props.serverIDs,
+        userID: this.props.userID,
+        username: username,
+      });
+    } else {
+      const dm = this.props.user.directMessages[subViewData.selectedDM];
+      this.props.socket.emit("typing", {
+        servers: this.props.serverIDs,
+        userID: this.props.userID,
+        username: username,
+        isDm: true,
+        receiver: dm.user._id,
+      });
+    }
     this.setState({ [event.target.name]: event.target.value });
   }
   componentWillUnmount() {
-    document.removeEventListener("keydown", this.handleEsc);
-    this.stoppedTyping();
+    if (this.props.currentView.view === "server") {
+      document.removeEventListener("keydown", this.handleEsc);
+      this.stoppedTyping();
+    }
   }
   stoppedTyping() {
     const { username } = this.props.user;
-    this.props.socket.emit("notTyping", {
-      servers: this.props.serverIDs,
-      userID: this.props.userID,
-      username: username,
-    });
+    const { view, subViewData } = this.props.currentView;
+    if (view === "server") {
+      this.props.socket.emit("notTyping", {
+        servers: this.props.serverIDs,
+        userID: this.props.userID,
+        username: username,
+      });
+    } else {
+      console.log("stopped");
+
+      const dm = this.props.user.directMessages[subViewData.selectedDM];
+      this.props.socket.emit("notTyping", {
+        servers: this.props.serverIDs,
+        userID: this.props.userID,
+        username: username,
+        isDm: true,
+        receiver: dm.user._id,
+      });
+    }
   }
   componentDidMount() {
     this.usersTyping = [];

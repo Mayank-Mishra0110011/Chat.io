@@ -42,10 +42,6 @@ app.use(passport.initialize());
 
 require("./config/passport")(passport);
 
-app.use("/user", user);
-app.use("/server", server);
-app.use("/channel", channel);
-
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
   app.get("*", (req, res) => {
@@ -60,11 +56,27 @@ const socketServer = app.listen(port, () => {
 });
 
 const io = socket(socketServer);
-
 const users = {};
+const dmUsers = {};
+
+app.use("/user", user(io, dmUsers));
+app.use("/server", server);
+app.use("/channel", channel(io));
 
 io.on("connection", (socket) => {
+  socket.on("registerUser", (data) => {
+    dmUsers[data] = {
+      socketid: socket.id,
+      socket: socket,
+    };
+  });
   socket.on("disconnect", () => {
+    if (dmUsers[socket.id]) {
+      // this part is a bug, socketid is not mapped to user
+      // the opposite is true
+      // memory leak, so to speak
+      delete dmUsers[socket.id];
+    }
     if (users[socket.id]) {
       users[socket.id].servers.forEach((server) => {
         socket.to(server).emit("userOffline", {
@@ -157,39 +169,111 @@ io.on("connection", (socket) => {
     });
   });
   socket.on("typing", (data) => {
-    const { servers, username, userID } = { ...data };
+    const { servers, username, userID, isDm } = { ...data };
     if (!users[socket.id])
       users[socket.id] = { userID: userID, servers: servers };
-    servers.forEach((server) => {
-      socket.join(server);
-      socket.to(server).emit("typing", {
-        username: username,
+    if (isDm) {
+      const { receiver } = { ...data };
+      if (dmUsers[receiver]) {
+        dmUsers[receiver].socket.emit("typing", {
+          username: username
+        });
+      }
+    } else {
+      servers.forEach((server) => {
+        socket.join(server);
+        socket.to(server).emit("typing", {
+          username: username,
+        });
       });
-    });
+    }
   });
   socket.on("notTyping", (data) => {
-    const { servers, username, userID } = { ...data };
+    const { servers, username, userID, isDm } = { ...data };
     if (!users[socket.id])
       users[socket.id] = { userID: userID, servers: servers };
-    servers.forEach((server) => {
-      socket.join(server);
-      socket.to(server).emit("notTyping", {
-        username: username,
+    if (isDm) {
+      const { receiver } = { ...data };
+      if (dmUsers[receiver]) {
+        dmUsers[receiver].socket.emit("notTyping", {
+          username: username
+        });
+      }
+    } else {
+      servers.forEach((server) => {
+        socket.join(server);
+        socket.to(server).emit("notTyping", {
+          username: username,
+        });
       });
-    });
+    }
   });
   socket.on("message", (data) => {
-    const { servers, userID, username, profilePicture, message } = { ...data };
+    const { servers, userID, username, profilePicture, message, isDm } = {
+      ...data,
+    };
     if (!users[socket.id])
       users[socket.id] = { userID: userID, servers: servers };
-    servers.forEach((server) => {
-      socket.join(server);
-      socket.to(server).emit("message", {
-        id: userID,
-        username: username,
-        profilePicture: profilePicture,
-        message: message,
+    if (isDm) {
+      const { receiver } = { ...data };
+      if (dmUsers[receiver]) {
+        dmUsers[receiver].socket.emit("message", {
+          id: userID,
+          username: username,
+          profilePicture: profilePicture,
+          message: message,
+        });
+      }
+    } else {
+      servers.forEach((server) => {
+        socket.join(server);
+        socket.to(server).emit("message", {
+          id: userID,
+          username: username,
+          profilePicture: profilePicture,
+          message: message,
+        });
       });
+    }
+  });
+  /*socket.on("dmUseroffline", (data) => {
+    const { userIDs, userID } = data;
+    userIDs.forEach((id) => {
+      if (dmUsers[id]) {
+        io.to(dmUsers[id]).emit("dmUseroffline", {
+          user: userID,
+        });
+      }
     });
   });
+  socket.on("dmUseronline", (data) => {
+    const { userIDs, userID } = data;
+    userIDs.forEach((id) => {
+      if (dmUsers[id]) {
+        io.to(dmUsers[id]).emit("dmUseronline", {
+          user: userID,
+        });
+      }
+    });
+  });
+  socket.on("dmUserbusy", (data) => {
+    const { userIDs, userID } = data;
+    userIDs.forEach((id) => {
+      if (dmUsers[id]) {
+        io.to(dmUsers[id]).emit("dmUserbusy", {
+          user: userID,
+        });
+      }
+    });
+  });
+  socket.on("dmUserdnd", (data) => {
+    const { userIDs, userID } = data;
+    userIDs.forEach((id) => {
+      if (dmUsers[id]) {
+        io.to(dmUsers[id]).emit("dmUserdnd", {
+          user: userID,
+        });
+      }
+    });
+  });*/
 });

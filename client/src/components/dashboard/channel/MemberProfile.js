@@ -1,9 +1,15 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import axios from "axios";
+
+import { setDefaultView } from "../../../actions/viewAction";
 
 class MemberProfile extends Component {
   constructor() {
     super();
     this.clickListener = this.clickListener.bind(this);
+    this.sendMessage = this.sendMessage.bind(this);
   }
   componentDidUpdate() {
     if (this.props.show) {
@@ -13,6 +19,19 @@ class MemberProfile extends Component {
       modal.style.opacity = "1";
       document.addEventListener("click", this.clickListener);
     }
+  }
+  sendMessage() {
+    const { userData } = this.props.user;
+    if (
+      userData.directMessages.filter(
+        (dm) => dm.user._id === this.props.userData.id
+      ).length === 0
+    ) {
+      axios.post("http://localhost:5000/user/dm/add", {
+        receiverID: this.props.userData.id,
+      });
+    }
+    this.props.setDefaultView();
   }
   modalClose() {
     const modal = document.getElementById("memberProfileModal");
@@ -75,6 +94,7 @@ class MemberProfile extends Component {
                     className="btn btn-secondary px-3"
                     type="button"
                     style={{ backgroundColor: "#43b581" }}
+                    onClick={this.sendMessage}
                   >
                     Send Message
                   </button>
@@ -88,4 +108,13 @@ class MemberProfile extends Component {
   }
 }
 
-export default MemberProfile;
+MemberProfile.propTypes = {
+  user: PropTypes.object.isRequired,
+  setDefaultView: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  user: state.user,
+});
+
+export default connect(mapStateToProps, { setDefaultView })(MemberProfile);

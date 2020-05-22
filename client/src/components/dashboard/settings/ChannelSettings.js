@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import axios from "axios";
 
-import { deleteChannel } from "../../../actions/channelAction";
 import { unsetSettingsView } from "../../../actions/viewAction";
-import { getServers } from "../../../actions/serverAction";
 
 class ChannelSettings extends Component {
   constructor() {
@@ -13,16 +12,11 @@ class ChannelSettings extends Component {
   }
   deleteChannel() {
     const { subViewData } = this.props.currentView;
-    this.props
-      .deleteChannel({
-        serverID: subViewData.serverID,
-        channelID: subViewData.id
-      })
-      .then(() => {
-        this.props.unsetSettingsView();
-        this.props.getServers();
-      })
-      .catch(() => {});
+    axios.post("http://localhost:5000/channel/delete", {
+      serverID: subViewData.serverID,
+      channelID: subViewData.id,
+    });
+    this.props.unsetSettingsView();
   }
   render() {
     const { subViewData } = this.props.currentView;
@@ -70,7 +64,7 @@ class ChannelSettings extends Component {
             className="d-flex align-items-center"
             style={{
               width: "15rem",
-              height: "4rem"
+              height: "4rem",
             }}
           >
             <div className="d-flex align-items-center ml-2">
@@ -89,7 +83,7 @@ class ChannelSettings extends Component {
             className="d-flex align-items-center justify-content-start"
             style={{
               width: "15rem",
-              height: "2.5rem"
+              height: "2.5rem",
             }}
           >
             <div className="d-flex align-items-center setting">
@@ -102,7 +96,7 @@ class ChannelSettings extends Component {
             className="d-flex align-items-center justify-content-start"
             style={{
               width: "15rem",
-              height: "2.5rem"
+              height: "2.5rem",
             }}
           >
             <div className="d-flex align-items-center setting">
@@ -115,7 +109,7 @@ class ChannelSettings extends Component {
             className="d-flex align-items-center justify-content-start"
             style={{
               width: "15rem",
-              height: "2.5rem"
+              height: "2.5rem",
             }}
           >
             <div className="d-flex align-items-center setting">
@@ -129,7 +123,7 @@ class ChannelSettings extends Component {
             style={{
               width: "15rem",
               height: "1px",
-              backgroundColor: "hsla(0, 0%, 100%, 0.06)"
+              backgroundColor: "hsla(0, 0%, 100%, 0.06)",
             }}
           ></div>
         </div>
@@ -138,7 +132,7 @@ class ChannelSettings extends Component {
             className="d-flex align-items-center justify-content-start"
             style={{
               width: "15rem",
-              height: "2.5rem"
+              height: "2.5rem",
             }}
           >
             <div
@@ -156,17 +150,13 @@ class ChannelSettings extends Component {
 
 ChannelSettings.propTypes = {
   currentView: PropTypes.object.isRequired,
-  deleteChannel: PropTypes.func.isRequired,
-  getServers: PropTypes.func.isRequired,
-  unsetSettingsView: PropTypes.func.isRequired
+  unsetSettingsView: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
-  currentView: state.currentView
+const mapStateToProps = (state) => ({
+  currentView: state.currentView,
 });
 
 export default connect(mapStateToProps, {
-  deleteChannel,
-  getServers,
-  unsetSettingsView
+  unsetSettingsView,
 })(ChannelSettings);

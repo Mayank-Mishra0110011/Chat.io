@@ -1,4 +1,8 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+
+import { setSettingsView, setSubView } from "../../../actions/viewAction";
 
 class ServerDropdown extends Component {
   constructor() {
@@ -6,8 +10,17 @@ class ServerDropdown extends Component {
     this.openInviteModal = this.openInviteModal.bind(this);
     this.closeInviteModal = this.closeInviteModal.bind(this);
     this.clickListener = this.clickListener.bind(this);
+    this.openServerSettings = this.openServerSettings.bind(this);
     this.handleEsc = this.handleEsc.bind(this);
     document.addEventListener("keydown", this.handleEsc);
+  }
+  openServerSettings() {
+    let selected = parseInt(this.props.currentView.selected) - 1;
+    this.props.setSubView({
+      subView: "server",
+      subViewData: selected,
+    });
+    this.props.setSettingsView();
   }
   openInviteModal() {
     this.props.removeFunctionReference("modalFunc");
@@ -83,6 +96,7 @@ class ServerDropdown extends Component {
           <div
             className={"server-option d-flex mt-1"}
             style={{ borderRadius: "3px" }}
+            onClick={this.openServerSettings}
           >
             <div
               style={{ width: "100%", height: "100%" }}
@@ -285,4 +299,16 @@ class ServerDropdown extends Component {
   }
 }
 
-export default ServerDropdown;
+ServerDropdown.propTypes = {
+  currentView: PropTypes.object.isRequired,
+  setSubView: PropTypes.func.isRequired,
+  setSettingsView: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  currentView: state.currentView,
+});
+
+export default connect(mapStateToProps, { setSubView, setSettingsView })(
+  ServerDropdown
+);

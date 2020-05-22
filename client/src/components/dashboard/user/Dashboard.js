@@ -12,8 +12,13 @@ import {
   setStatus,
   setStatusOnLoad,
   setProfilePicture,
+  addDMUser,
 } from "../../../actions/userAction";
-import { addMessage } from "../../../actions/channelAction";
+import {
+  addMessage,
+  addChannel,
+  removeChannel,
+} from "../../../actions/channelAction";
 
 import Home from "./Home";
 import Servers from "../server/Servers";
@@ -48,7 +53,7 @@ class Dashboard extends Component {
     this.socket.disconnect();
   }
   removeFunctionReference(type, func = null) {
-    if (this.state[type]) {
+    if (this.state[type] && func) {
       if (func && this.state[type] === func) {
         this.setState({
           [type]: null,
@@ -71,7 +76,7 @@ class Dashboard extends Component {
     } else if (this.props.currentView.view === "server") {
       document.title = "#ChannelName";
     } else {
-      document.title = "@Username";
+      document.title = "@temp";
     }
     const home = document.getElementsByClassName("home")[0];
     if (home) {
@@ -139,9 +144,19 @@ class Dashboard extends Component {
   }
   componentDidMount() {
     this.socket = window.io.connect("http://localhost:5000");
+    this.socket.emit("registerUser", this.props.auth.user.id);
     this.socket.on("profileUpdate", (data) => {
       const { id, profilePicture } = data;
       this.props.setProfilePicture(id, profilePicture, true);
+    });
+    this.socket.on("conversationCreated", (data) => {
+      this.props.addDMUser(data);
+    });
+    this.socket.on("channelCreated", (data) => {
+      this.props.addChannel(data);
+    });
+    this.socket.on("channelDeleted", (data) => {
+      this.props.removeChannel(data);
     });
     this.socket.on("message", (data) => {
       const { id, username, profilePicture, message } = data;
@@ -244,8 +259,9 @@ class Dashboard extends Component {
     const { view } = this.props.currentView;
     const { servers, serversLoading } = this.props.servers;
     const { userDataLoading, userData, statusIsSet } = this.props.user;
-    const serverList = [],
-      serverIDs = [];
+    let serverList = [],
+      serverIDs = [],
+      userIDs = [];
     if (!serversLoading && servers) {
       for (let i = 0; i < servers.length; i++) {
         serverIDs.push(servers[i]._id);
@@ -262,12 +278,17 @@ class Dashboard extends Component {
     }
     if (!statusIsSet && !userDataLoading && !serversLoading) {
       if (userData) {
+        userIDs = userData.directMessages.map((dm) => dm.user._id);
         if (this.props.location.state && this.props.location.state.newMember) {
           this.emit("joinServer", {
             servers: serverIDs,
             user: this.props.auth.user.id,
           });
         }
+        this.emit(`dmUser${userData.status}`, {
+          userIDs: userIDs,
+          userID: this.props.auth.user.id,
+        });
         this.emit(userData.status, {
           servers: serverIDs,
           user: this.props.auth.user.id,
@@ -316,6 +337,7 @@ class Dashboard extends Component {
                     removeFunctionReference={this.removeFunctionReference}
                     emit={this.emit}
                     serverIDs={serverIDs}
+                    userIDs={userIDs}
                     userID={this.props.auth.user.id}
                   />
                 </div>
@@ -330,7 +352,10 @@ class Dashboard extends Component {
                       removeFunctionReference={this.removeFunctionReference}
                     />
                   ) : (
-                    <DMChat />
+                    <DMChat
+                      socket={this.socket}
+                      userID={this.props.auth.user.id}
+                    />
                   )}
                 </div>
               </>
@@ -355,6 +380,9 @@ Dashboard.propTypes = {
   addUser: PropTypes.func.isRequired,
   addMessage: PropTypes.func.isRequired,
   setProfilePicture: PropTypes.func.isRequired,
+  addChannel: PropTypes.func.isRequired,
+  removeChannel: PropTypes.func.isRequired,
+  addDMUser: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -373,4 +401,7 @@ export default connect(mapStateToProps, {
   addUser,
   addMessage,
   setProfilePicture,
+  addChannel,
+  addDMUser,
+  removeChannel,
 })(Dashboard);

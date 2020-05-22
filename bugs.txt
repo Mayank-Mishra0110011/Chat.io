@@ -1,2 +1,24 @@
 => After deleting a channel and opening settings of a different channel, esc event makes view null, redirects to home instead of server.
 => If a currently selected channel is deleted, app will crash
+
+to implement: {
+  onClick of send message to any user => {
+    if dmreducer.conversations.forEach(conv => conv.receiver.includes(id of user being dm;d))
+      set to default view with that dm conversation as selected
+    else:
+      create new conversation object, push to reducer, send xhr request, 
+      set to default view with the new created conversation selected dm conversation as selected
+    
+    in chat content if view is default, make xhr request to get that conversation
+  }
+  create a new DM reducer to store dm's
+
+  make createServer process a state change action
+
+  figure out how to status/profile/yada yada of DMd users
+    one solution could be to store each user' connection socket id as the value of user' object id as key when user goes online
+    while establishing connection do this
+}
+
+=> dm status thing doesnt work for some reason
+=> if status is change and a user logs in after xhr request, his status is not the latest one in dm status

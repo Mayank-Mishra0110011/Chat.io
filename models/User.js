@@ -54,8 +54,14 @@ const UserSchema = new Schema({
   },
   directMessages: [
     {
-      type: Schema.Types.ObjectId,
-      ref: "conversation",
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: "user",
+      },
+      conversation: {
+        type: Schema.Types.ObjectId,
+        ref: "conversation",
+      },
     },
   ],
   servers: [

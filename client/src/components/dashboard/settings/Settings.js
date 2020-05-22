@@ -6,8 +6,10 @@ import { unsetSettingsView, setSubView } from "../../../actions/viewAction";
 
 import UserSettings from "./UserSettings";
 import ChannelSettings from "./ChannelSettings";
+import ServerSettings from "./ServerSettings";
 
 import ProfileSettings from "./ProfileSettings";
+import Overview from "../server/Overview";
 
 class Settings extends Component {
   constructor() {
@@ -28,11 +30,13 @@ class Settings extends Component {
     }
   }
   render() {
-    const { subView } = this.props.currentView;
+    const { subView, subViewData } = this.props.currentView;
     return (
       <>
         {subView === "channel" ? (
           <ChannelSettings />
+        ) : subView === "server" ? (
+          <ServerSettings selected={subViewData} />
         ) : (
           <UserSettings disconnect={this.props.disconnect} />
         )}
@@ -80,10 +84,14 @@ class Settings extends Component {
         >
           {/* inner container */}
           {/* Yeet any added setting component in here */}
-          <ProfileSettings
-            emit={this.props.emit}
-            serverIDs={this.props.serverIDs}
-          />
+          {subView === "server" ? (
+            <Overview selected={subViewData} />
+          ) : subView === "user" ? (
+            <ProfileSettings
+              emit={this.props.emit}
+              serverIDs={this.props.serverIDs}
+            />
+          ) : null}
         </div>
       </>
     );

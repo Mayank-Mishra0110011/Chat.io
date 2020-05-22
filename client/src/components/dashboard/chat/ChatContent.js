@@ -18,9 +18,11 @@ class ChatContent extends Component {
     this.scroll = this.scroll.bind(this);
   }
   componentDidMount() {
-    const selectedServer = parseInt(this.props.currentView.selected) - 1;
-    const { servers } = this.props.servers;
-    this.props.getMessages(servers[selectedServer].selectedChannel);
+    if (this.props.currentView.view === "server") {
+      const selectedServer = parseInt(this.props.currentView.selected) - 1;
+      const { servers } = this.props.servers;
+      this.props.getMessages(servers[selectedServer].selectedChannel);
+    }
   }
   isValidURL(url) {
     let pattern = /(ftp|http|https):(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(|([\w#!:.?+=&%@!-]))?/;
@@ -34,7 +36,8 @@ class ChatContent extends Component {
     this.scroll();
   }
   render() {
-    const { view } = this.props.currentView;
+    const { view, subViewData } = this.props.currentView;
+    const { userData } = this.props.user;
     const { messagesLoading, messages } = this.props.channel;
     const messageArr = [];
     if (!messagesLoading && messages) {
@@ -154,7 +157,10 @@ class ChatContent extends Component {
                     <div className="box">
                       <div className="server">
                         <img
-                          src="./assets/image/samplepic1.jpg"
+                          src={
+                            userData.directMessages[subViewData.selectedDM].user
+                              .profilePicture
+                          }
                           className="img-fluid"
                           alt="profilePic"
                         />
@@ -164,11 +170,20 @@ class ChatContent extends Component {
                       className="text-light py-2"
                       style={{ fontWeight: "bold" }}
                     >
-                      Username 1
+                      {
+                        userData.directMessages[subViewData.selectedDM].user
+                          .username
+                      }
                     </h1>
                     <p style={{ color: "#8e9297" }}>
                       This is the begining of your direct message history with{" "}
-                      <span style={{ fontWeight: "bold" }}>@Username 1.</span>
+                      <span style={{ fontWeight: "bold" }}>
+                        @
+                        {
+                          userData.directMessages[subViewData.selectedDM].user
+                            .username
+                        }
+                      </span>
                     </p>
                   </div>
                 )}
@@ -188,12 +203,14 @@ ChatContent.propTypes = {
   servers: PropTypes.object.isRequired,
   channel: PropTypes.object.isRequired,
   getMessages: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   currentView: state.currentView,
   servers: state.servers,
   channel: state.channel,
+  user: state.user,
 });
 
 export default connect(mapStateToProps, { getMessages })(ChatContent);

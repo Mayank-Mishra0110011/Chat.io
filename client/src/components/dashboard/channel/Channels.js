@@ -2,12 +2,13 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import classnames from "classnames";
+import axios from "axios";
 
 import ServerDropDown from "../server/ServerDropdown";
 import Invite from "../server/Invite";
 
 import { setSelectedChannel, getServers } from "../../../actions/serverAction";
-import { createChannel, getMessages } from "../../../actions/channelAction";
+import { getMessages } from "../../../actions/channelAction";
 import { setSettingsView, setSubView } from "../../../actions/viewAction";
 
 class Channels extends Component {
@@ -41,16 +42,13 @@ class Channels extends Component {
     const selectedServer = parseInt(this.props.selectedServer) - 1;
     const { servers } = this.props.servers;
     const thisServer = servers[selectedServer]._id;
-    this.props
-      .createChannel({
-        channelName: this.state.channelName,
-        channelType: this.state.channelType,
-        serverID: thisServer,
-      })
-      .then(() => {
-        this.props.getServers();
-      })
-      .catch(() => {});
+    this.modalClose();
+    axios.post("http://localhost:5000/channel/create", {
+      channelName: this.state.channelName,
+      channelType: this.state.channelType,
+      serverID: thisServer,
+      server: this.props.selectedServer,
+    });
   }
   modalOpen() {
     this.props.removeFunctionReference("modalFunc");
@@ -755,7 +753,6 @@ Channels.propTypes = {
   servers: PropTypes.object.isRequired,
   setSelectedChannel: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
-  createChannel: PropTypes.func.isRequired,
   getServers: PropTypes.func.isRequired,
   setSettingsView: PropTypes.func.isRequired,
   setSubView: PropTypes.func.isRequired,
@@ -771,7 +768,6 @@ const mapStateToProps = (state) => ({
 
 export default connect(mapStateToProps, {
   setSelectedChannel,
-  createChannel,
   getServers,
   setSettingsView,
   setSubView,

@@ -44,8 +44,7 @@ class Landing extends Component {
           <div className="row py-5">
             <div className="col-lg-12 text-light text-center">
               <p className="text-muted" style={{ fontWeight: "400" }}>
-                All-in-one voice, text and video chat that's free, secure, and
-                works on both your desktop and phone.
+                All-in-one voice, text and video chat application
               </p>
             </div>
           </div>

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-import { setServerView } from "../../../actions/viewAction";
+import { setServerView, setSubView } from "../../../actions/viewAction";
 
 class Servers extends Component {
   constructor() {
@@ -10,6 +10,10 @@ class Servers extends Component {
     this.clickHandler = this.clickHandler.bind(this);
   }
   clickHandler() {
+    this.props.setSubView({
+      subView: null,
+      subViewData: null,
+    });
     this.props.removeFunctionReference("modalFunc");
     this.props.setServerView(this.props.id);
   }
@@ -39,6 +43,7 @@ class Servers extends Component {
 Servers.propTypes = {
   currentView: PropTypes.object.isRequired,
   setServerView: PropTypes.func.isRequired,
+  setSubView: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -47,4 +52,5 @@ const mapStateToProps = (state) => ({
 
 export default connect(mapStateToProps, {
   setServerView,
+  setSubView,
 })(Servers);

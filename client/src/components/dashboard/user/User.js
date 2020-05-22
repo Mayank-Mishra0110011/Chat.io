@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-import { setSettingsView } from "../../../actions/viewAction";
-import { setStatus } from "../../../actions/userAction";
+import { setSettingsView, setSubView } from "../../../actions/viewAction";
+import { setStatus, changeMediaStatus } from "../../../actions/userAction";
 
 class User extends Component {
   constructor() {
@@ -12,6 +12,10 @@ class User extends Component {
     this.showUserSettings = this.showUserSettings.bind(this);
   }
   showUserSettings() {
+    this.props.setSubView({
+      subView: "user",
+      subViewData: null,
+    });
     this.props.setSettingsView();
   }
   changeStatus(status) {
@@ -26,6 +30,11 @@ class User extends Component {
       servers: this.props.serverIDs,
       user: this.props.userID,
     });
+    // console.log(this.props.userIDs, "yeeeeeee");
+    // this.props.emit(`dmUser${status.id}`, {
+    //   userIDs: this.props.userIDs,
+    //   userID: this.props.userID,
+    // });
     this.props.setStatus(status.id, this.props.userID);
   }
   componentDidMount() {
@@ -37,7 +46,7 @@ class User extends Component {
     [...document.getElementsByClassName("status-option")].forEach((status) => {
       status.addEventListener("click", this.changeStatus.bind(this, status));
     });
-    [...document.getElementsByClassName("options")].forEach((option) => {
+    /*[...document.getElementsByClassName("options")].forEach((option) => {
       if (option.id === "settings") {
         option.addEventListener("click", this.showUserSettings);
       } else {
@@ -94,7 +103,7 @@ class User extends Component {
           audio.play();
         });
       }
-    });
+    });*/
   }
   showStatusOptions() {
     this.props.removeFunctionReference("modalFunc", this.showStatusOptions);
@@ -123,7 +132,14 @@ class User extends Component {
     }
   }
   render() {
-    const { userData } = this.props.user;
+    const { userData, userDataLoading } = this.props.user;
+    let micType, audioType;
+    if (!userDataLoading && userData) {
+      audioType = userData.audioEnabled
+        ? "headphones-on.png"
+        : "headphones-off.png";
+      micType = userData.micEnabled ? "unmute.png" : "mute.png";
+    }
     return (
       <div id="user">
         <div className="userbox d-flex justify-content-center align-items-center w-100">
@@ -265,16 +281,30 @@ class User extends Component {
             style={{ width: "50%", height: "200%" }}
             className="d-flex justify-content-around"
           >
-            <div className="options d-flex justify-content-center align-items-center">
+            <div
+              className="options d-flex justify-content-center align-items-center"
+              onClick={() => {
+                this.props.changeMediaStatus({
+                  micEnabled: !userData.micEnabled,
+                });
+              }}
+            >
               <img
-                src="./assets/image/mute.png"
+                src={"./assets/image/" + micType}
                 alt="sp1"
                 className="img-fluid"
               />
             </div>
-            <div className="options d-flex justify-content-center align-items-center">
+            <div
+              className="options d-flex justify-content-center align-items-center"
+              onClick={() => {
+                this.props.changeMediaStatus({
+                  audioEnabled: !userData.audioEnabled,
+                });
+              }}
+            >
               <img
-                src="./assets/image/headphones-on.png"
+                src={"./assets/image/" + audioType}
                 alt="sp1"
                 className="img-fluid"
               />
@@ -282,6 +312,7 @@ class User extends Component {
             <div
               className="options d-flex justify-content-center align-items-center"
               id="settings"
+              onClick={this.showUserSettings}
             >
               <img
                 src="./assets/image/settings.svg"
@@ -301,6 +332,8 @@ User.propTypes = {
   setSettingsView: PropTypes.func.isRequired,
   setStatus: PropTypes.func.isRequired,
   currentView: PropTypes.object.isRequired,
+  changeMediaStatus: PropTypes.func.isRequired,
+  setSubView: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -311,4 +344,6 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, {
   setSettingsView,
   setStatus,
+  setSubView,
+  changeMediaStatus,
 })(User);

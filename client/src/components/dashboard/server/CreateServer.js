@@ -83,15 +83,11 @@ class CreateServer extends Component {
     }
   }
   createServer() {
-    this.props
-      .createServer({
-        serverName: this.state.serverName,
-        image: this.state.serverIcon,
-      })
-      .then(() => {
-        this.props.getServers();
-      })
-      .catch(() => {});
+    this.modalClose();
+    this.props.createServer({
+      serverName: this.state.serverName,
+      image: this.state.serverIcon,
+    });
   }
   render() {
     const { view, serverIcon } = this.state;

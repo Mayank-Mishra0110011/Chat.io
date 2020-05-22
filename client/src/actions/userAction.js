@@ -5,8 +5,13 @@ import {
   SET_STATUS_ON_LOAD,
   SET_USER_PROFILE_PICTURE,
   UPDATE_PROFILE,
+  GET_CHANNEL_MESSAGES,
+  ADD_DM,
+  CHANGE_MEDIA_STATUS,
 } from "./types";
 import axios from "axios";
+
+import { setMessagesLoading } from "./channelAction";
 
 export const getUserData = () => (dispatch) => {
   dispatch(setUserDataLoading());
@@ -24,6 +29,15 @@ export const getUserData = () => (dispatch) => {
         payload: {},
       })
     );
+};
+
+export const changeMediaStatus = (mediaStatus) => (dispatch) => {
+  dispatch({
+    type: CHANGE_MEDIA_STATUS,
+    payload: mediaStatus,
+  });
+  let status = Object.keys(mediaStatus)[0];
+  axios.post("http://localhost:5000/user/set/media", { [status]: true });
 };
 
 export const setStatus = (newStatus, userID) => (dispatch) => {
@@ -89,6 +103,31 @@ export const updateProfile = (
       dispatch({
         type: UPDATE_PROFILE,
         payload: null,
+      })
+    );
+};
+
+export const addDMUser = (data) => (dispatch) => {
+  dispatch({
+    type: ADD_DM,
+    payload: data,
+  });
+};
+
+export const getMessages = (id) => (dispatch) => {
+  dispatch(setMessagesLoading());
+  axios
+    .post("http://localhost:5000/user/message", { conversationID: id })
+    .then((res) => {
+      dispatch({
+        type: GET_CHANNEL_MESSAGES,
+        payload: res.data,
+      });
+    })
+    .catch(() =>
+      dispatch({
+        type: GET_CHANNEL_MESSAGES,
+        payload: {},
       })
     );
 };

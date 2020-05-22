@@ -3,6 +3,8 @@ import {
   USER_DATA_LOADING,
   SET_STATUS_ON_LOAD,
   SET_USER_PROFILE_PICTURE,
+  ADD_DM,
+  CHANGE_MEDIA_STATUS,
 } from "../actions/types";
 
 const initialState = {
@@ -35,6 +37,16 @@ export default function (state = initialState, action) {
         ...state,
         statusIsSet: true,
       };
+    case CHANGE_MEDIA_STATUS:
+      newState = { ...state };
+      let updatedMediaType = Object.keys(action.payload)[0];
+      console.log(updatedMediaType);
+      newState.userData[updatedMediaType] = action.payload[updatedMediaType];
+      return newState;
+    case ADD_DM:
+      newState = { ...state };
+      newState.userData.directMessages.push(action.payload);
+      return newState;
     default:
       return state;
   }

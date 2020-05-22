@@ -74,6 +74,7 @@ class Members extends Component {
               profilePicture: servers[selected - 1].members[i].profilePicture,
               username: servers[selected - 1].members[i].username,
               status: servers[selected - 1].members[i].status,
+              id: servers[selected - 1].members[i]._id,
             });
           }}
         >
