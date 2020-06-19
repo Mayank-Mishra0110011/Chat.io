@@ -13,7 +13,7 @@ class Register extends Component {
       username: "",
       email: "",
       password: "",
-      errors: {}
+      errors: {},
     };
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -28,7 +28,7 @@ class Register extends Component {
     const userData = {
       username: this.state.username,
       email: this.state.email,
-      password: this.state.password
+      password: this.state.password,
     };
     this.props.registerUser(userData, this.props.history);
   }
@@ -66,7 +66,7 @@ class Register extends Component {
                     </label>
                     <input
                       className={classnames("form-control finput", {
-                        "is-invalid": errors.email
+                        "is-invalid": errors.email,
                       })}
                       autoComplete="off"
                       type="text"
@@ -91,7 +91,7 @@ class Register extends Component {
                     </label>
                     <input
                       className={classnames("form-control finput", {
-                        "is-invalid": errors.username
+                        "is-invalid": errors.username,
                       })}
                       autoComplete="off"
                       type="text"
@@ -115,7 +115,7 @@ class Register extends Component {
                     </label>
                     <input
                       className={classnames("form-control finput", {
-                        "is-invalid": errors.password
+                        "is-invalid": errors.password,
                       })}
                       autoComplete="off"
                       type="password"
@@ -159,12 +159,12 @@ class Register extends Component {
 Register.propTypes = {
   registerUser: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired
+  errors: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   auth: state.auth,
-  errors: state.errors
+  errors: state.errors,
 });
 
 export default connect(mapStateToProps, { registerUser })(Register);

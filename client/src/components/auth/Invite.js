@@ -31,10 +31,14 @@ class Invite extends Component {
               },
             });
           } else {
+            console.log(join);
+
             this.props.history.push("/dashboard");
           }
         });
     } else {
+      console.log("yeee");
+
       this.props.history.push("/dashboard");
     }
   }
